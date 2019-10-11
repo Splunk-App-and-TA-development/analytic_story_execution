@@ -1,0 +1,164 @@
+<form script="asx.js">
+  <label>Analytic Story Execution</label>
+  <search id="detection_results">
+    <query>|  detect story="$title$" | `format_detection_results` </query>
+  </search>
+  <fieldset submitButton="true">
+    <input type="dropdown" token="title" searchWhenChanged="false">
+      <label>Select a Story</label>
+      <fieldForLabel>title</fieldForLabel>
+      <fieldForValue>title</fieldForValue>
+      <search>
+        <query>| rest /services/configs/conf-analytic_stories splunk_server=local count=0 | fields title | sort title</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="time" searchWhenChanged="false">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row id="tabs">
+    <panel>
+      <html>
+                <ul id="tabs_list" class="nav nav-tabs">
+                  <li class="active">
+                      <a href="#" class="toggle-tab all_results" data-toggle="tab" data-elements="all_results">
+                        Detection Results
+                      </a>
+                  </li>
+                  <li>
+                      <a href="#" class="toggle-tab all_entities" data-toggle="tab" data-elements="all_entities">
+                        Entities
+                      </a>
+                  </li>
+                  <li>
+                      <a href="#" class="toggle-tab individual_entities" data-toggle="tab" data-elements="individual_entities">
+                        Detection Results per user
+                      </a>
+                  </li>
+                  <li>
+                      <a href="#" class="toggle-tab investigate" data-toggle="tab" data-elements="investigate">
+                        Investigation Results
+                      </a>
+                  </li>
+                </ul>
+            </html>
+    </panel>
+  </row>
+  <row id="all_results">
+    <panel>
+      <title>Detection Results for $title$</title>
+      <event>
+        <search base="detection_results">
+          <progress>
+            <!-- Set the token to Show Spinner when the search is running -->
+            <set token="showSpinner">true</set>
+          </progress>
+          <done>
+            <!-- Unset the token to Hide Spinner when the search completes -->
+            <unset token="showSpinner"></unset>
+          </done>
+          <query>|</query>
+        </search>
+        <option name="refresh.display">none</option>
+      </event>
+      <html depends="$showSpinner$">
+         <!-- CSS Style to Create Spinner using animation -->
+         <style>
+           .loadSpinner {
+             margin: 0 auto;
+             border: 5px solid #FFF; /* White BG */
+             border-top: 5px solid #3863A0; /* Blue */
+             border-radius: 50%;
+             width: 20px;
+             height: 20px;
+             animation: spin 1s linear infinite;
+           }
+           @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+           }
+           <!-- CSS override to hide default Splunk Search Progress Bar -->
+           #panel1 .progress-bar{
+             visibility: hidden;
+           }
+         </style>
+         <div class="loadSpinner"/>
+       </html>
+    </panel>
+  </row>
+  <row id="all_entities">
+    <panel>
+      <title>Detection searches for all entitiy</title>
+      <table>
+        <search base="detection_results">
+          <query>| stats values(entity_*)  values(detection_result_count)  as count by detection_search_name | sort -count</query>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">highlow</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="wrap">true</option>
+        <format type="color" field="values(detection_result_count)">
+          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
+          <scale type="minMidMax" maxValue="10"></scale>
+        </format>
+      </table>
+    </panel>
+  </row>
+  <row id="individual_entities">
+    <panel>
+      <title>Detection searches per user</title>
+      <table>
+        <search base="detection_results">
+          <query>| stats values(detection_search_name)  values(detection_result_count)  as count by entity_user | sort -count</query>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">highlow</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="wrap">true</option>
+        <format type="color" field="values(detection_result_count)">
+          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
+          <scale type="minMidMax" maxValue="10"></scale>
+        </format>
+      </table>
+    </panel>
+    <panel>
+      <title>Detection searches per dest</title>
+      <table>
+        <search base="detection_results">
+          <query>| stats values(detection_search_name)  values(detection_result_count)  as count by entity_dest | sort -count</query>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">highlow</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="wrap">true</option>
+        <format type="color" field="values(detection_result_count)">
+          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
+          <scale type="minMidMax" maxValue="10"></scale>
+        </format>
+      </table>
+    </panel>
+  </row>
+  <row id="investigate">
+    <panel>
+      <title>Investigation Results for $title$</title>
+      <event>
+        <search base="detection_results">
+          <query>|makeresults | eval story = $title$|investigate</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+  </row>
+</form>

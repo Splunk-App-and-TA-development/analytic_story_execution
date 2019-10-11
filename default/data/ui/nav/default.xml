@@ -1,0 +1,6 @@
+<nav search_view="search" color="#a64b37">  
+  <view name="analytic_story_details"/>
+  <view name="analytic_story_execution" default="true"/>
+  <view name="search"/>
+  <a href="http://docs.splunk.com/Documentation/ESSOC">Docs</a>
+</nav>
