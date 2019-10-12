@@ -22,6 +22,26 @@
       </default>
     </input>
   </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Attempting to run the following searchessssss:</title>
+        <search>
+          <query>| rest /services/configs/conf-analytic_stories splunk_server=local count=0 
+| search title="$title$" 
+| spath input=detection_searches path={} output="Detections" 
+| spath input=investigative_searches path={} output="Investigations" 
+| rename title as Story 
+| table Story "Detections" "Investigations"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
   <row id="tabs">
     <panel>
       <html>
@@ -53,6 +73,29 @@
   <row id="all_results">
     <panel>
       <title>Detection Results for $title$</title>
+      <html depends="$showSpinner$">
+         <!-- CSS Style to Create Spinner using animation -->
+         <style>
+           .loadSpinner {
+             margin: 0 auto;
+             border: 5px solid #FFF; /* White BG */
+             border-top: 5px solid #3863A0; /* Blue */
+             border-radius: 50%;
+             width: 40px;
+             height: 40px;
+             animation: spin 1s linear infinite;
+           }
+           @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+           }
+           <!-- CSS override to hide default Splunk Search Progress Bar -->
+           #panel1 .progress-bar{
+             visibility: hidden;
+           }
+         </style>
+         <div class="loadSpinner"/>
+       </html>
       <event>
         <search base="detection_results">
           <progress>
@@ -67,6 +110,87 @@
         </search>
         <option name="refresh.display">none</option>
       </event>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Detection searches for all entitiy</title>
+      <table>
+        <search base="detection_results">
+          <query>| stats values(entity_*)  values(detection_result_count)  as count by detection_search_name | sort -count</query>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">highlow</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="wrap">true</option>
+        <format type="color" field="values(detection_result_count)">
+          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
+          <scale type="minMidMax" maxValue="10"></scale>
+        </format>
+      </table>
+    </panel>
+  </row>
+  <row id="individual_entities">
+    <panel>
+      <title>Detection searches per dest</title>
+      <table>
+        <search base="detection_results">
+          <query>| stats values(detection_search_name)  values(detection_result_count)  as count by entity_dest | sort count</query>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">highlow</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="wrap">true</option>
+        <format type="color" field="values(detection_result_count)">
+          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
+          <scale type="minMidMax" maxValue="10"></scale>
+        </format>
+      </table>
+    </panel>
+    <panel>
+      <title>Detection searches per user</title>
+      <table>
+        <search base="detection_results">
+          <query>| stats values(detection_search_name)  values(detection_result_count)  as count by entity_user | sort count</query>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">highlow</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="wrap">true</option>
+        <format type="color" field="values(detection_result_count)">
+          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
+          <scale type="minMidMax" maxValue="10"></scale>
+        </format>
+      </table>
+    </panel>
+    <panel>
+      <title>Top detection search name</title>
+      <table>
+        <search base="detection_results">
+          <query>| stats  count by detection_search_name detection_result_count | sort detection_result_count</query>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">highlow</option>
+        <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="wrap">true</option>
+        <format type="color" field="values(detection_result_count)">
+          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
+          <scale type="minMidMax" maxValue="10"></scale>
+        </format>
+      </table>
+    </panel>
+  </row>
+  <row id="investigate">
+    <panel>
+      <title>Investigation Results for $title$</title>
       <html depends="$showSpinner$">
          <!-- CSS Style to Create Spinner using animation -->
          <style>
@@ -90,74 +214,11 @@
          </style>
          <div class="loadSpinner"/>
        </html>
-    </panel>
-  </row>
-  <row id="all_entities">
-    <panel>
-      <title>Detection searches for all entitiy</title>
-      <table>
-        <search base="detection_results">
-          <query>| stats values(entity_*)  values(detection_result_count)  as count by detection_search_name | sort -count</query>
-        </search>
-        <option name="count">10</option>
-        <option name="dataOverlayMode">highlow</option>
-        <option name="drilldown">cell</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="rowNumbers">true</option>
-        <option name="wrap">true</option>
-        <format type="color" field="values(detection_result_count)">
-          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
-          <scale type="minMidMax" maxValue="10"></scale>
-        </format>
-      </table>
-    </panel>
-  </row>
-  <row id="individual_entities">
-    <panel>
-      <title>Detection searches per user</title>
-      <table>
-        <search base="detection_results">
-          <query>| stats values(detection_search_name)  values(detection_result_count)  as count by entity_user | sort -count</query>
-        </search>
-        <option name="count">10</option>
-        <option name="dataOverlayMode">highlow</option>
-        <option name="drilldown">cell</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="rowNumbers">true</option>
-        <option name="wrap">true</option>
-        <format type="color" field="values(detection_result_count)">
-          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
-          <scale type="minMidMax" maxValue="10"></scale>
-        </format>
-      </table>
-    </panel>
-    <panel>
-      <title>Detection searches per dest</title>
-      <table>
-        <search base="detection_results">
-          <query>| stats values(detection_search_name)  values(detection_result_count)  as count by entity_dest | sort -count</query>
-        </search>
-        <option name="count">10</option>
-        <option name="dataOverlayMode">highlow</option>
-        <option name="drilldown">cell</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="rowNumbers">true</option>
-        <option name="wrap">true</option>
-        <format type="color" field="values(detection_result_count)">
-          <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#53A051"></colorPalette>
-          <scale type="minMidMax" maxValue="10"></scale>
-        </format>
-      </table>
-    </panel>
-  </row>
-  <row id="investigate">
-    <panel>
-      <title>Investigation Results for $title$</title>
       <event>
         <search base="detection_results">
-          <query>|makeresults | eval story = $title$|investigate</query>
+          <query>| eval story = "$title$" |investigate</query>
         </search>
-        <option name="refresh.display">progressbar</option>
+        <option name="refresh.display">none</option>
       </event>
     </panel>
   </row>

@@ -2,5 +2,6 @@
   <view name="analytic_story_details"/>
   <view name="analytic_story_execution" default="true"/>
   <view name="search"/>
+  <view name="story_execution_audit"/>
   <a href="http://docs.splunk.com/Documentation/ESSOC">Docs</a>
 </nav>
