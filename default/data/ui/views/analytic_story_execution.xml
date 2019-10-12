@@ -25,14 +25,22 @@
   <row>
     <panel>
       <table>
-        <title>Attempting to run the following searchessssss:</title>
+        <title>Attempting to run the following detection searches:</title>
         <search>
-          <query>| rest /services/configs/conf-analytic_stories splunk_server=local count=0 
-| search title="$title$" 
-| spath input=detection_searches path={} output="Detections" 
-| spath input=investigative_searches path={} output="Investigations" 
-| rename title as Story 
-| table Story "Detections" "Investigations"</query>
+          <query>| rest /services/configs/conf-analytic_stories splunk_server=local count=0 | search title="$title$" | table title detection_searches | spath input=detection_searches path={} output="Detection Searches" |rename title as Story| table "Detection Searches"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Attempting to run the following investigative searches:</title>
+        <search>
+          <query>| rest /services/configs/conf-analytic_stories splunk_server=local count=0 | search title="$title$" | table title investigative_searches | spath input=investigative_searches path={} output="Investigative Searches" |rename title as Story| table "Investigative Searches"</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>
@@ -106,13 +114,23 @@
             <!-- Unset the token to Hide Spinner when the search completes -->
             <unset token="showSpinner"></unset>
           </done>
-          <query>|</query>
+          <query>| search detection_result_count&gt;0</query>
         </search>
         <option name="refresh.display">none</option>
       </event>
     </panel>
+    <panel>
+      <table>
+        <title>No results found for the following detection searches</title>
+        <search base="detection_results">
+          <query>|search detection_result_count &lt;1  | table detection_search_name detection_result_count</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
   </row>
-  <row>
+  <row id="all_entities">
     <panel>
       <title>Detection searches for all entitiy</title>
       <table>
