@@ -108,6 +108,7 @@ class Investigate(StreamingCommand):
                 i[investigative_entity_name] = []
 
                 for e in sorted(detected_entities):
+                    self.logger.info("investigate.py - e: {0}".format(e))
                     # self.logger.info("investigate.py - search {0} - entities {1} ".format(investigative_search['search_name'],e))
                     for detected_entity_name, detected_entity_value in sorted(e.items()):
                         if investigative_entity_name == detected_entity_name:
@@ -211,10 +212,16 @@ class Investigate(StreamingCommand):
 
                 for detection_result in detection_results:
                     for each_result in detection_result['detections']:
+                        self.logger.info("investigate.py - each_result {0}".format(each_result))
 
                         results['detection_searches'].append(each_result['detection_search_name'])
 
-                        investigations = self._generate_investigation_objects(each_result['entities'])
+                        # check that we have a detected entity values before we move on to investigate
+                        # else continue
+                        if each_result['entities']:
+                            investigations = self._generate_investigation_objects(each_result['entities'])
+                        else:
+                            continue
 
                         # Execute investigation searches
                         investigations_results = self._run_investigations(investigations, service, earliest_time,
@@ -227,7 +234,10 @@ class Investigate(StreamingCommand):
             else:
                 results['story'] = "no investigations for this story found"
 
-            yield results
+            # grab the results object and add it to the record so we can yield all the data
+            record['investigation_results'] = results
+
+            yield record
 
 if __name__ == "__main__":
     dispatch(Investigate, sys.argv, sys.stdin, sys.stdout, __name__)
