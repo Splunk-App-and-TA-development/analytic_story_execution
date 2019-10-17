@@ -234,7 +234,7 @@ class Investigate(StreamingCommand):
 
                         for each_result in detection_result['detections']:
 
-                            if each_result['detection_result_count'] > "0" and each_result['detection_search_name'] == record['detection_search_name']:
+                            if each_result['detection_result_count'] > "0":
                             # check that we have a detected entity values before we move on to investigate
                 
                                 if each_result['entities'] != "null":
@@ -254,14 +254,14 @@ class Investigate(StreamingCommand):
 
 
                                 #BREAKING FOR TEST : TAKE NOTE. This loop will only work for the first detection result in KV store 
-                                break               
+                                           
 
                         record['investigation_results'] = results
 
                 else:
                     record['investigation_results'] = "no investigations for this story found"
 
-            self.logger.info("investigate.py - FINAL ------------------------------------")
+            self.logger.info("investigate.py - FINAL -------------------")
             yield {
 
             '_time': time.time(),
