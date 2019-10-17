@@ -14,6 +14,8 @@ NOTE:
 
 There are some mandatory fields needed in your savedsearches.conf files to be able to leverage the Detect and Investigate binaries
 
+
+MANDATORY FEILDS NEEDED BY THE CODE
 #Example
 
 	
