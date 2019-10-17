@@ -68,7 +68,7 @@ class Investigate(StreamingCommand):
         for i in searches_to_run:
             search=i['search_name']
             for spl in i['searches']:
-                kwargs = {"exec_mode": "normal", "earliest_time": earliest_time, "latest_time": latest_time}
+                kwargs = {"exec_mode": "normal", "earliest_time": earliest_time, "latest_time": latest_time + 1}
                 spl =spl + "| head 1"
                 #self.logger.info("investigate.py - TEST3: {0}".format((spl)))
                 job = service.jobs.create(spl, **kwargs)
@@ -228,12 +228,13 @@ class Investigate(StreamingCommand):
                                  
                     results['investigation_results'] = []               
                     self._calculate_investigations(service, record['story'])
+
                     #Running from the KV store 
                     for detection_result in detection_results:
 
                         for each_result in detection_result['detections']:
 
-                            if each_result['detection_result_count'] > "0":
+                            if each_result['detection_result_count'] > "0" and each_result['detection_search_name'] == record['detection_search_name']:
                             # check that we have a detected entity values before we move on to investigate
                 
                                 if each_result['entities'] != "null":

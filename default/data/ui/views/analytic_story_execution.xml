@@ -68,7 +68,7 @@
             <!-- Unset the token to Hide Spinner when the search completes -->
             <unset token="showSpinner"></unset>
           </done>
-          <query>|</query>
+          <query>| search detection_result_count &gt; 0</query>
         </search>
         <option name="refresh.display">none</option>
       </event>
@@ -95,6 +95,17 @@
          </style>
          <div class="loadSpinner"/>
        </html>
+    </panel>
+    <panel>
+      <table>
+        <title>No Results found</title>
+        <search base="detection_results">
+          <query>| search detection_result_count = 0 | table detection_search_name detection_result_count</query>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
     </panel>
   </row>
   <row id="all_entities">
