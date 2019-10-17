@@ -17,7 +17,7 @@ class Investigate(StreamingCommand):
     investigative_searches_to_run = []
     final_search = ""
     COLLECTION_NAME = "mp_detect_new"
-    INVESTIGATIVE_COLLECTION_NAME = "investigative_collection"
+    INVESTIGATIVE_COLLECTION_NAME = "investigative_collection_new"
     # story = "Malicious PowerShell"
     collection_results = {}
 
@@ -34,59 +34,57 @@ class Investigate(StreamingCommand):
 
         self.collection_results['investigations'] = investigations_results
         collection.data.insert(json.dumps(self.collection_results))
-        self.logger.info("investigate.py - Entered into KV: {0}".format(json.dumps(self.collection_results)))
+        self.logger.info("investigate.py - Append Investigate Collection: {0}".format(json.dumps(self.collection_results)))
+
+    def _get_username(self, service):
+        search = '| rest /services/authentication/current-context/context | fields + username'
+        results = service.jobs.oneshot(search)
+        username_results = splunklib.results.ResultsReader(results)
+        username = next(iter(username_results))['username']
+        return username
 
     def _process_job_results(self, job, job_results, search):
         investigation_results = []
-
+        results={}       
+        results['investigative_search_name'] = search
         # if there are results lets process them
         if job['resultCount'] > "0":
 
             for result in job_results:
                 # add store detection results
                 investigation_results.append(dict(result))
-            self.logger.info("investigate.py - search: {0} - results {1}".format(search['search_name'], investigation_results))
-        else:
-            self.logger.info(
-                "investigate.py - search: {0} - HAD NO results".format(search['search_name']))
+            results['investigation_results'] = investigation_results
+            
+        # else:
+        #     self.logger.info(
+        #         "investigate.py - search: {0} - HAD NO results".format(search))
 
-        return investigation_results
+        return results
 
     def _run_investigations(self, searches_to_run, service, earliest_time, latest_time):
 
-        # run detection searches
-        for search in searches_to_run:
-            for s in search['searches']:
+        r = []
 
-                # set parameters for search
+        for i in searches_to_run:
+            search=i['search_name']
+            for spl in i['searches']:
                 kwargs = {"exec_mode": "normal", "earliest_time": earliest_time, "latest_time": latest_time}
-                spl = s
-                self.logger.info("investigate.py - running investigation search: {0}".format(s))
-
-                # add pipe if is missing
-                if spl[0] != "|":
-                    spl = "| search %s" % spl
-
-                # dispatch job
+                spl =spl + "| head 1"
+                #self.logger.info("investigate.py - TEST3: {0}".format((spl)))
                 job = service.jobs.create(spl, **kwargs)
-
-                # we sleep for 2 seconds to not DOS Splunk with submitting searches
-                #time.sleep(1)
-
-                # check for results, if done we process them
+                
                 while True:
                     job.refresh()
                     if job['isDone'] == "1":
-                        self.logger.info("investigate.py - completed investigation search: {0}".format(s))
+                        #self.logger.info("investigate.py - C investigation search: {0}".format(spl))
                         break
-
-                # process raw results with reader
                 job_results = splunklib.results.ResultsReader(job.results())
-
-                # process job results into detection objects extract the necessary keys
                 investigation_results = self._process_job_results(job, job_results, search)
+            r.append(investigation_results)
 
-                return investigation_results
+        return r
+
+        
 
     def _generate_investigation_objects(self, detected_entities):
         investigations = []
@@ -108,8 +106,7 @@ class Investigate(StreamingCommand):
                 i[investigative_entity_name] = []
 
                 for e in sorted(detected_entities):
-                    self.logger.info("investigate.py - e: {0}".format(e))
-                    # self.logger.info("investigate.py - search {0} - entities {1} ".format(investigative_search['search_name'],e))
+                
                     for detected_entity_name, detected_entity_value in sorted(e.items()):
                         if investigative_entity_name == detected_entity_name:
                             #self.logger.info("investigate.py - investigative_entity_name {2} | detected_entity_name {0} | detected_entity_value {1} ".format(detected_entity_name, detected_entity_value, investigative_entity_name))
@@ -130,11 +127,12 @@ class Investigate(StreamingCommand):
 
                     # check if this is not our first entity and if is not in the list then we must update all our searches
                     if len(searches['entities']) > 0 and entity_name not in searches['entities']:
-                        # self.logger.info("investigate.py {0} ||| haven't seen entity: {1} | updated_search: {2}".format(search_name, entity_name, searches['searches']))
+                        
                         updated_searches = []
                         searches['multiple_entities'] = True
                         # update all searches store
                         for s in searches['searches']:
+                            
                             updated_search = s.replace(modified_entity_name, v)
                             updated_searches.append(updated_search)
 
@@ -142,15 +140,15 @@ class Investigate(StreamingCommand):
 
                     searches['entities'].append(entity_name)
                     searches['values'].append(v)
+                   
                     updated_search = search.replace(modified_entity_name, v)
                     searches['searches'].append(updated_search)
 
                     if searches['multiple_entities'] == True:
                         del searches['searches'][-1]
-                    # self.logger.info("investigate.py {0} ||| entity: {1} | updated_search: {2}".format(search_name, entity_name, updated_search))
-
-            self.logger.info("investigate.py {0} ||| FINAL OBJECT | entity: {1} | values: {2} | searches: {3}".format(search_name, searches['entities'], searches['values'], json.dumps(searches['searches'], indent=4)))
+                    
             investigations.append(searches)
+        #self.logger.info("investigate.py - FULL : {0}".format(json.dumps(investigations)))
         return investigations
 
     def _calculate_investigations(self, service, story):
@@ -186,58 +184,100 @@ class Investigate(StreamingCommand):
         port = splunk.getDefault('port')
         service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody")
 
-
-        if hasattr(search_results, 'search_et') and hasattr(search_results, 'search_lt'):
-            earliest_time = search_results.search_et
-            latest_time = search_results.search_lt
-
         collection = service.kvstore[self.COLLECTION_NAME]
 
         if self.COLLECTION_NAME in service.kvstore:
-            self.logger.info("investigate.py - Collection: {0}".format(self.COLLECTION_NAME))
+            self.logger.info("investigate.py - Detect Collection: {0}".format(self.COLLECTION_NAME))
+
+        investigative_collection = self._setup_kvstore(service)
+        detection_results = (collection.data.query())
+
+        # for detection_result in detection_results:
+        #     kv_key = (detection_result['_key'])
+
+        # self.logger.info("investigate.py - key: {0}".format(kv_key))
+
+        # investigations_results = {
+
+        # }
+
+        # collection.data.batch_save(kv_key, json.dumps(investigations_results))
+        # self.logger.info("investigate.py - DONE UPDATING: {0}".format(self.COLLECTION_NAME))
+        # test= {}
+
+        # test = (collection.data.query())
+        # self.logger.info("investigate.py - FINAL KV: {0}".format(json.dumps(test)))
+
+        # yield test
+    
+
 
         for record in records:
-
-
+            record['executed_by'] = self._get_username(service)
             results = {}
-            if 'story' in record:
-                results['story'] = record['story']
-                results['investigations_results'] = []
-                results['detection_searches'] = []
+            final_yield = []
+            detection_result_count = record['detection_result_count']
+            record['investigation_results'] = "null"
 
-                self._calculate_investigations(service, results['story'])
-                detection_results = (collection.data.query())
+            if detection_result_count == "0":
+                record['investigation_results'] = "null"
 
-                investigative_collection = self._setup_kvstore(service)
+            if detection_result_count > "0": 
 
-                for detection_result in detection_results:
-                    for each_result in detection_result['detections']:
-                        self.logger.info("investigate.py - each_result {0}".format(each_result))
+                if 'story' in record:
+                                 
+                    results['investigation_results'] = []               
+                    self._calculate_investigations(service, record['story'])
+                    #Running from the KV store 
+                    for detection_result in detection_results:
 
-                        results['detection_searches'].append(each_result['detection_search_name'])
+                        for each_result in detection_result['detections']:
 
-                        # check that we have a detected entity values before we move on to investigate
-                        # else continue
-                        if each_result['entities']:
-                            investigations = self._generate_investigation_objects(each_result['entities'])
-                        else:
-                            continue
+                            if each_result['detection_result_count'] > "0":
+                            # check that we have a detected entity values before we move on to investigate
+                
+                                if each_result['entities'] != "null":
+                                    investigations = self._generate_investigation_objects(each_result['entities'])
 
-                        # Execute investigation searches
-                        investigations_results = self._run_investigations(investigations, service, earliest_time,
-                                                                          latest_time)
-                        self.logger.info("investigate.py - {0}".format(investigations_results))
+                                else:
+                                    continue                                
+                                # Execute investigation searches
+                                earliest_time = each_result['first_detection_time']
+                                earliest_time = int(time.mktime(time.strptime(earliest_time, '%Y-%m-%d %H:%M:%S')))
+                                latest_time = each_result['last_detection_time']
+                                latest_time = int(time.mktime(time.strptime(latest_time, '%Y-%m-%d %H:%M:%S')))
+                                investigation_results = self._run_investigations(investigations, service, earliest_time,
+                                                                                  latest_time)
+                               
+                                results['investigation_results'].append((investigation_results))
 
-                        self._store_collections(investigative_collection, investigations_results)
-                        results['investigations_results'].append(investigations_results)
 
-            else:
-                results['story'] = "no investigations for this story found"
+                                #BREAKING FOR TEST : TAKE NOTE. This loop will only work for the first detection result in KV store 
+                                break               
 
-            # grab the results object and add it to the record so we can yield all the data
-            record['investigation_results'] = results
+                        record['investigation_results'] = results
 
-            yield record
+                else:
+                    record['investigation_results'] = "no investigations for this story found"
+
+            self.logger.info("investigate.py - FINAL ------------------------------------")
+            yield {
+
+            '_time': time.time(),
+            'sourcetype': "_json",
+            'story': record['story'],
+            'executed_by': record['executed_by'],
+            'detection_result_count': record['detection_result_count'],
+            'detection_search_name': record['detection_search_name'],
+            'first_detection_time': record['first_detection_time'],
+            'last_detection_time': record['last_detection_time'],
+            'support_search_name': record['support_search_name'],
+            'entities': record['entities'],
+            'mappings': record['mappings'],
+            'detection_results' : record['detection_results'],
+            'investigation_results' : record['investigation_results']
+                  }
+
 
 if __name__ == "__main__":
     dispatch(Investigate, sys.argv, sys.stdin, sys.stdout, __name__)

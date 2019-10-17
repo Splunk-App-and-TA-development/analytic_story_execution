@@ -11,7 +11,9 @@ require([
     $('.all_results').html(_.template('<%- _("Detection Results").t() %>'));
     $('.all_entities').html(_.template('<%- _("Entities").t() %>'));
     $('.individual_entities').html(_.template('<%- _("Individual Entities").t() %>'));
+    $('.chart').html(_.template('<%- _("Chart").t() %>'));
     $('.investigate').html(_.template('<%- _("Investigate Results").t() %>'));
+
 
     const tokenModel = mvc.Components.get('default');
     const submittedTokens = mvc.Components.get('submitted');
