@@ -1,5 +1,13 @@
 # Analytic Story Execution
 
+## Benefit
+
+Analysts can execute an Analytic Story end-to-end in their environments.
+
+## Value
+Security analysts gain use case relevant context and correlation when the event is generated
+
+
 This application gives you the tools to execute an analytic story in Splunk. There are two custom commands in this app that will help you to detect and investigate scenarios in your dataset:
 
 #1 Detect
