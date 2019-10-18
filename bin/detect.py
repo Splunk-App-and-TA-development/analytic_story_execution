@@ -22,9 +22,10 @@ class DetectCommand(GeneratingCommand):
     support_searches_to_run = []
     story_results = {}
     collection_names = []
-    COLLECTION_NAME = "mp_detect_new"
+    COLLECTION_NAME = "detect_kvstore"
     DETECT_INDEX = "detect_index"
     collection_results = {}
+    search_failed = []
 
     def _support_searches(self, content):
         support_data = {}
@@ -32,7 +33,7 @@ class DetectCommand(GeneratingCommand):
         support_data['search_description'] = content['description']
         support_data['search'] = content['search']
         self.support_searches_to_run.append(support_data)
-        # self.logger.info("detect.py - prepping to run support search: {0}".format(support_data['search_name']))
+        # self.logger.info("detect.pym - prepping to run support search: {0}".format(support_data['search_name']))
         return self.support_searches_to_run
 
     def _investigative_searches(self, content):
@@ -52,12 +53,13 @@ class DetectCommand(GeneratingCommand):
         detection_data['entities'] = content['action.escu.entities']
         detection_data['mappings'] = json.loads(content['action.escu.mappings'])
         self.detection_searches_to_run.append(detection_data)
-        #self.logger.info("detect.py - prepping to run detection search: {0}".format(detection_data['search_name']))
+        #self.logger.info("detect.pym - prepping to run detection search: {0}".format(detection_data['search_name']))
         return self.detection_searches_to_run
 
     def _run_support(self, support_searches_to_run, service, earliest_time, latest_time):
         # Run all Support searches
         support_search_name = []
+        
 
         for search in support_searches_to_run:
             # setup service job
@@ -70,14 +72,19 @@ class DetectCommand(GeneratingCommand):
             spl = search['search']
             if spl[0] != "|":
                 spl = "| search %s" % spl
-            #self.logger.info("detect.py - running support search: {0}".format(search['search_name']))
+            #self.logger.info("detect.pym - running support search: {0}".format(search['search_name']))
             job = service.jobs.create(spl, **kwargs)
-            if job['isFailed'] == True:
-                self.logger.info("detect.py - NO support search: {0}".format(spl))
+            
+
             while True:
                 job.refresh()
+
+                if job['isFailed'] == "1":
+                    self.logger.info("detect.pymm - Failed Support search: {0}".format(spl))
+                    self.search_failed.append(search['search_name'])
+
                 if job['isDone'] == "1":
-                    self.logger.info("detect.py - completed support search: {0}".format(search['search_name']))
+                    self.logger.info("detect.pym - completed support search: {0}".format(search['search_name']))
                     break
             # append each completed support search
             support_search_name.append(search['search_name'])
@@ -125,12 +132,12 @@ class DetectCommand(GeneratingCommand):
             # first check that the entity result is not empty
             if entity_value:
                 if entity_name in entity.keys():
-                    # self.logger.info( "detect.py - ENTITY name {0} EXISTS | ENTITY value {1} | SEARCH: {2}".format(entity_name,entity_value,search['search_name']))
+                    # self.logger.info( "detect.pym - ENTITY name {0} EXISTS | ENTITY value {1} | SEARCH: {2}".format(entity_name,entity_value,search['search_name']))
                     for v in entity_value:
                         entity[entity_name]['count'] += 1
                         entity[entity_name]['entity_results'].append(v)
                 else:
-                    # self.logger.info("detect.py - ENTITY name {0} DOES NOT EXISTS | ENTITY value {1} | SEARCH: {2}".format(entity_name,entity_value,search['search_name']))
+                    # self.logger.info("detect.pym - ENTITY name {0} DOES NOT EXISTS | ENTITY value {1} | SEARCH: {2}".format(entity_name,entity_value,search['search_name']))
                     entity[entity_name] = {}
                     for v in entity_value:
                         if 'count' in entity[entity_name].keys():
@@ -159,7 +166,7 @@ class DetectCommand(GeneratingCommand):
         mysocket.send(json.dumps(self.collection_results))
         mysocket.close()
 
-        self.logger.info("detect.py - DONE -----")
+        self.logger.info("detect.pym - DONE -----")
 
     def _store_collections(self, collection):
 
@@ -204,7 +211,7 @@ class DetectCommand(GeneratingCommand):
 
             entities.append(entity)
 
-            #self.logger.info("detect.py - PROCESSED ENTITY {0} | SEARCH: {1}".format(entity, search['search_name']))
+            #self.logger.info("detect.pym - PROCESSED ENTITY {0} | SEARCH: {1}".format(entity, search['search_name']))
             if epoch:
                 first_detection_time = min(epoch)
                 first_detection_time = datetime.utcfromtimestamp(first_detection_time).strftime('%Y-%m-%d %H:%M:%S')
@@ -251,7 +258,7 @@ class DetectCommand(GeneratingCommand):
             # set parameters for search
             kwargs = {"exec_mode": "normal", "earliest_time": earliest_time, "latest_time": latest_time}
             spl = search['search']
-            #self.logger.info("detect.py - running detection search: {0}".format(search['search_name']))
+            #self.logger.info("detect.pym - running detection search: {0}".format(search['search_name']))
 
             # add pipe if is missing
             if spl[0] != "|":
@@ -268,12 +275,13 @@ class DetectCommand(GeneratingCommand):
             while True:
                 job.refresh()
                 if job['isFailed'] == "1":
-                    self.logger.info("detect.py - Failed detection search: {0}".format(spl))
-                    #raise Exception('detect.py - The search: {0} failed to execute'.format(search['search_name']))
+                    self.logger.info("detect.pym - Failed detection search: {0}".format(spl))
+                    self.search_failed.append(search['search_name'])
+                    #raise Exception('detect.pym - The search: {0} failed to execute'.format(search['search_name']))
                     break
 
                 if job['isDone'] == "1":
-                    self.logger.info("detect.py - Finished Detection search: {0}".format(search['search_name']))
+                    self.logger.info("detect.pym - Finished Detection search: {0}".format(search['search_name']))
                     # process raw results with reader
                     job_results = splunklib.results.ResultsReader(job.results())
 
@@ -287,8 +295,8 @@ class DetectCommand(GeneratingCommand):
 
         # connect to splunk and start execution
         port = splunk.getDefault('port')
-        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="DA-ESS-ContentUpdate")
-        self.logger.info("detect.pytime - starting run story - {0} ".format(self.story))
+        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="analytic_story_execution")
+        self.logger.info("detect.pymtime - starting run story - {0} ".format(self.story))
 
         # get story name
         self.story_results['story'] = self.story
@@ -337,7 +345,7 @@ class DetectCommand(GeneratingCommand):
 
         # if detection to run is empty we likely got a incorrect story name
         if len(detection_searches_to_run) < 1:
-            self.logger.error("detect.py - No detection searches in this story")
+            self.logger.error("detect.pym - No detection searches in this story")
 
             raise Exception(
                 'no detections found for story: {0} .. try a correct story name or check spelling'.format(self.story))
@@ -349,13 +357,13 @@ class DetectCommand(GeneratingCommand):
 
         # now lets run all the detection searches and process their results into story_results['detections']
         self._run_detections(detection_searches_to_run, service, earliest_time, latest_time, support_search_name)
-        self.logger.info("detect.py - detection searches run and processed -")
+        self.logger.info("detect.pym - detection searches run and processed -")
 
         
         # lets store results in a KVStore to run investigate.py on that store
         self._store_collections(collection)
-        self.logger.info("detect.py - detection results added to KVSTore - {0} ".format(self.COLLECTION_NAME))
-        self.logger.info("detect.py - COMPLETED")
+        self.logger.info("detect.pym - detection results added to KVSTore - {0} ".format(self.COLLECTION_NAME))
+        self.logger.info("detect.pym - COMPLETED")
 
         # Index the results
         #self._store_index(service)
@@ -381,7 +389,8 @@ class DetectCommand(GeneratingCommand):
             'support_search_name': result['support_search_name'],
             'entities': result['entities'],
             'mappings': result['mappings'],
-            'detection_results' : result['detection_results']
+            'detection_results' : result['detection_results'],
+            'detection_search_failed' : self.search_failed
                   }
 
 

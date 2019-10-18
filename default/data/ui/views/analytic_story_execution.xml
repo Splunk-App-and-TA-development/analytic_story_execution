@@ -186,12 +186,17 @@
   <row id="investigate">
     <panel>
       <title>Investigation Results for $title$</title>
-      <event>
+      <table>
         <search base="detection_results">
-          <query>|investigate</query>
+          <query>| search detection_result_count > 0
+| investigate 
+| mvexpand investigation_results 
+| spath output=investigation_search_name input=investigation_results path=investigation_search_name 
+| spath output=investigation_result input=investigation_results path=investigation_result{} | stats count values(investigation_result) as investigation_result by investigation_search_name</query>
         </search>
-        <option name="refresh.display">progressbar</option>
-      </event>
+        <option name="count">10</option>
+        <option name="drilldown">cell</option>
+      </table>
     </panel>
   </row>
 </form>
