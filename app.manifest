@@ -4,7 +4,7 @@
     "title": "Analytic Story Execution", 
     "id": {
       "group": null, 
-      "name": "Analytic-Story-Execution", 
+      "name": "Analytic_Story_Execution",
       "version": "1.0"
     }, 
     "author": [
