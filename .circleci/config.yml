@@ -1,0 +1,147 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+
+dependencies:
+  cache_directories:
+    - "~/.apt-cache"
+  pre:
+    - sudo rm -rf /var/cache/apt/archives && sudo ln -s ~/.apt-cache /var/cache/apt/archives && mkdir -p ~/.apt-cache/partial
+
+apt-run: &apt-install
+  name: install system packages
+  command: |
+    sudo apt update -qq
+    sudo apt install -y python-dev
+
+version: 2.1
+
+executors:
+  content-executor:
+    docker:
+      - image: circleci/python:latest
+    working_directory: ~/repo
+
+jobs:
+  build-package:
+    executor: content-executor
+    steps:
+      - run:
+          name: checkout repo
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "" ]; then
+                git clone https://${GITHUB_TOKEN}@github.com/splunk/analytic_story_execution.git
+            else
+                git clone --branch ${CIRCLE_BRANCH} https://${GITHUB_TOKEN}@github.com/splunk/analytic_story_execution.git
+            fi
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "analytic_story_execution/default/app.conf" }}
+      - run:
+          name: grab splunk packaging toolkit
+          command: |
+            curl -Ls https://download.splunk.com/misc/packaging-toolkit/splunk-packaging-toolkit-0.9.0.tar.gz -o ~/splunk-packaging-toolkit-latest.tar.gz
+            mkdir ~/slim-latest
+            tar -zxf ~/splunk-packaging-toolkit-latest.tar.gz -C ~/slim-latest --strip-components=1
+      - run:
+          name: install splunk packaging toolkit (slim)
+          command: |
+              cd ~/slim-latest
+              sudo pip install --upgrade pip setuptools
+              sudo pip install virtualenv
+              virtualenv --python=/usr/bin/python2.7 --clear venv
+              source venv/bin/activate
+              pip install semantic_version
+              pip install .
+      - run:
+          name: create a .spl for this build using slim
+          command: |
+              source ~/slim-latest/venv/bin/activate
+              mkdir ~/dist
+              cp -r analytic_story_execution ~/dist/
+              cd ~/dist
+              rm -rf analytic_story_execution/.git
+              rm -rf analytic_story_execution/.circleci
+              rm -rf analytic_story_execution/.gitignore
+              CONTENT_VERSION=0.1
+              mv analytic_story_execution Splunk_Analytic_Story_Execution
+              slim package -o upload Splunk_Analytic_Story_Execution
+              cp upload/*.tar.gz Splunk_Analytic_Story_Execution-latest.tar.gz
+      - store_artifacts:
+          path: ~/dist/upload
+          destination: package/
+      - persist_to_workspace:
+          root: ~/dist
+          paths:
+             - Splunk_Analytic_Story_Execution-latest.tar.gz
+  validate-content:
+    executor: content-executor
+    steps:
+      - attach_workspace:
+          at: ~/dist
+      - run: *apt-install
+      - run:
+          name: grab appinspect
+          command: |
+            curl -Ls http://dev.splunk.com/goto/appinspectdownload -o appinspect-lastest.tar.gz
+            mkdir appinspect-latest
+            tar -zxvf appinspect-lastest.tar.gz -C appinspect-latest --strip-components=1
+      - run:
+          name: install appinspect
+          command: |
+            cd appinspect-latest
+            rm -rf venv
+            sudo pip install --upgrade pip setuptools
+            sudo pip install virtualenv
+            virtualenv --python=/usr/bin/python2.7 --clear venv
+            source venv/bin/activate
+            pip install .
+      - run:
+          name: run appinspect
+          command: |
+            cd appinspect-latest
+            source venv/bin/activate
+            splunk-appinspect inspect ~/dist/Splunk_Analytic_Story_Execution-latest.tar.gz --included-tags=cloud
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "analytic_story_execution/default/app.conf" }}
+          paths:
+            - "venv"
+      - persist_to_workspace:
+          root: ~/dist/
+          paths:
+              - Splunk_Analytic_Story_Execution-latest.tar.gz
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ~/dist/Splunk_Analytic_Story_Execution-latest.tar.gz
+      - run:
+          name: publish release on github
+          command: |
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} ~/dist/Splunk_Analytic_Story_Execution-latest.tar.gz
+workflows:
+  version: 2.1
+  validate-and-build:
+    jobs:
+      - build-package:
+          filters:
+            tags:
+              only: /.*/
+      - validate-content:
+          requires:
+            - build-package
+          filters:
+            tags:
+              only: /.*/
+      - publish-github-release:
+          requires:
+            - build-package
+            - validate-content
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+
