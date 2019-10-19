@@ -64,14 +64,14 @@ If you want to learn more, please consult this [tutorial on how pull requests wo
 Here's an overview of how you can make a pull request against this project:
 
 1. Fork the [analytic\_story\_execution GitHub repository](https://github.com/splunk/analytic_story_execution/issues)
-2. Clone your fork using git and create a branch off develop
+2. Clone your fork using git and create a branch off master
 
     ```
     $ git clone git@github.com:YOUR_GITHUB_USERNAME/analytic_story_execution.git
     $ cd analytic_story_execution
 
-    # This project uses 'develop' for all development activity, so create your branch off that
-    $ git checkout -b your-bugfix-branch-name develop
+    # This project uses 'master' for all development activity, so create your branch off that
+    $ git checkout -b your-bugfix-branch-name master
     ```
     
 3. Make your changes, commit and push once your tests have passed
