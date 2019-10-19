@@ -1,13 +1,15 @@
-# Analytic Story Execution 
+# Analytic Story Execution App (ASX)
 ![](static/appIconAlt_2x.png)
 
-**Benefit** Instead of running each search individually, analysts can use this app to execute an Analytic Story end-to-end in their environments. 
+**Benefit:** Instead of running each search individually, analysts can use this app to execute an Analytic Story end-to-end in their environments.
 
-**Value** Security analysts gain use-case relevant context and correlation when events are generated.
+**Value:** Security analysts gain use-case relevant context and correlation when events are generated.
 
 ![](static/screenshot.png)
 
-It is as easy as selecting a Analytics Story clicking submit! This application gives you the tools to make the execute an analytic story in Splunk an automated process. There are two custom commands in this app that will help you to detect and investigate scenarios in your dataset automatically:
+This application gives you the tools to make the execution of an Analytic Story in Splunk an automated process. It's as easy as selecting an Analytic Story and clicking "Submit!"
+
+There are two custom commands in this app that will help you automatically detect and investigate scenarios in your dataset:
 
 ### Detect
 
@@ -15,7 +17,7 @@ It is as easy as selecting a Analytics Story clicking submit! This application g
 detect story="Malicious Powershell" | `format_detection_results`
 ```
 
-Run all detection searches beloning in an analytic story and store results the KV store collection `detect_kvstore`. Also returns the following object for each detection search:
+This runs all detection searches belonging to an Analytic Story and stores results in the KV store collection detect_kvstore. Also returns the following object for each detection search:
 
 ##### [Object Example](https://jsoneditoronline.org/?id=5527dddc593545baa60c5cfd4b10b2f0)
 
@@ -25,7 +27,7 @@ Run all detection searches beloning in an analytic story and store results the K
 
 `| investigate `
 
-Run all investigative searches belonging to a analytics story detection results. Note that `investigate` is a streaming command and can be excuted after detect for example: 
+This runs all investigative searches related to the results of a detection in an Analytic Story. Note that investigate is a streaming command and can be executed after "Detect."
 
 ```
 detect story="Malicious Powershell" 
