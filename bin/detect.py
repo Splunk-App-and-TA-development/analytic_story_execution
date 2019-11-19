@@ -22,7 +22,7 @@ class DetectCommand(GeneratingCommand):
     support_searches_to_run = []
     story_results = {}
     collection_names = []
-    COLLECTION_NAME = "detect_kvstore"
+    COLLECTION_NAME = "detect_kvstore_new"
     DETECT_INDEX = "detect_index"
     collection_results = {}
     search_failed = []
