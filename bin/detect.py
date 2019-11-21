@@ -295,7 +295,7 @@ class DetectCommand(GeneratingCommand):
 
         # connect to splunk and start execution
         port = splunk.getDefault('port')
-        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="analytic_story_execution")
+        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="Splunk_Analytic_Story_Execution")
         self.logger.info("detect.pymtime - starting run story - {0} ".format(self.story))
 
         # get story name
