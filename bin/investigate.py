@@ -82,7 +82,7 @@ class Investigate(StreamingCommand):
             for spl in i['searches']:
                 kwargs = {"exec_mode": "normal", "earliest_time": earliest_time, "latest_time": latest_time + 1}
                 spl =spl + "| head 2"
-                #self.logger.info("investigate.pym - Running Seach: {0}".format((spl)))
+                self.logger.info("investigate.pym - Running Seach: {0}".format((spl)))
                 
 
                 if spl in self.exists:
@@ -253,15 +253,19 @@ class Investigate(StreamingCommand):
                                 # check that we have a detected entity values before we move on to investigate
                     
                                     if each_result['entities'] != "null":
+                                        self.logger.info("investigate.pym - --------Calling Generate-------") 
                                         investigations = self._generate_investigation_objects(each_result['entities'])
 
                                     else:
+                                        self.logger.info("investigate.pym - --------ELSE-------") 
                                         continue                                
                                     # Execute investigation searches
                                     earliest_time = each_result['first_detection_time']
                                     earliest_time = int(time.mktime(time.strptime(earliest_time, '%Y-%m-%d %H:%M:%S')))
                                     latest_time = each_result['last_detection_time']
                                     latest_time = int(time.mktime(time.strptime(latest_time, '%Y-%m-%d %H:%M:%S')))
+
+                                    self.logger.info("investigate.pym - --------Calling RUNNN-------") 
 
                                     investigation_results = self._run_investigations(investigations, service, earliest_time,latest_time)
                                    
