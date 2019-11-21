@@ -3,9 +3,8 @@ require([
    'jquery',
    'splunkjs/mvc',
    'splunkjs/mvc/searchmanager',
-   '../app/DA-ESS-ContentUpdate/js/lib/tabs',
-   'css!../app/DA-ESS-ContentUpdate/js/lib/tabs.css',
-   'css!../app/DA-ESS-ContentUpdate/escu_summary.css',
+   '../app/Splunk_Analytic_Story_Execution/js/lib/tabs',
+   'css!../app/Splunk_Analytic_Story_Execution/js/lib/tabs.css',
    'splunkjs/mvc/simplexml/ready!'
  ], function(_, $, mvc, SearchManager) {
     $('.all_results').html(_.template('<%- _("Detection Results").t() %>'));
