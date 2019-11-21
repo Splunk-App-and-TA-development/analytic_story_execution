@@ -27,8 +27,8 @@
       <html>
                 <ul id="tabs_list" class="nav nav-tabs">
                   <li class="active">
-                      <a href="#" class="toggle-tab all_results" data-toggle="tab" data-elements="all_results">
-                        Detection Results
+                    <a href="#" class="toggle-tab individual_entities" data-toggle="tab" data-elements="individual_entities">
+                        Individual Entities
                       </a>
                   </li>
                   <li>
@@ -36,10 +36,10 @@
                         Entities
                       </a>
                   </li>
-                  <li>
-                      <a href="#" class="toggle-tab individual_entities" data-toggle="tab" data-elements="individual_entities">
-                        Detection Results per user
-                      </a>
+                  <li>    
+                      <a href="#" class="toggle-tab all_results" data-toggle="tab" data-elements="all_results">
+                        Detection Results
+                      </a>                      
                   </li>
                   <li>
                       <a href="#" class="toggle-tab chart" data-toggle="tab" data-elements="chart">
