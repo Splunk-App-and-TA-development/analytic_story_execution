@@ -204,7 +204,7 @@ class Investigate(StreamingCommand):
 
         search_results = self.search_results_info
         port = splunk.getDefault('port')
-        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="analytic_story_execution")
+        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="Splunk_Analytic_Story_Execution")
 
         collection = service.kvstore[self.DETECT_COLLECTION_NAME]
 
