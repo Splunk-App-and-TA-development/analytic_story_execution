@@ -16,7 +16,7 @@ class Investigate(StreamingCommand):
     logger = splunk.mining.dcutils.getLogger()
     investigative_searches_to_run = []
     final_search = ""
-    COLLECTION_NAME = "detect_kvstore"
+    DETECT_COLLECTION_NAME = "detect_kvstore_new"
     INVESTIGATIVE_COLLECTION_NAME = "investigate_kvstore"
     # story = "Malicious PowerShell"
     collection_results = {}
@@ -206,12 +206,12 @@ class Investigate(StreamingCommand):
         port = splunk.getDefault('port')
         service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="Splunk_Analytic_Story_Execution")
 
-        collection = service.kvstore[self.COLLECTION_NAME]
+        collection = service.kvstore[self.DETECT_COLLECTION_NAME]
 
         self.logger.info("investigate.pym - ----------Starting Investigation -------: ")
 
-        if self.COLLECTION_NAME in service.kvstore:
-            self.logger.info("investigate.pym - Reading from collection: {0}".format(self.COLLECTION_NAME))
+        if self.DETECT_COLLECTION_NAME in service.kvstore:
+            self.logger.info("investigate.pym - Reading from collection: {0}".format(self.DETECT_COLLECTION_NAME))
 
         investigative_collection = self._setup_kvstore(service)
         detection_results = (collection.data.query())
