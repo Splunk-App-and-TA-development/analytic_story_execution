@@ -2,7 +2,8 @@
 ![](static/appIconAlt_2x.png)
 ----
 
-##Description: 
+## Description: 
+
 This application gives you the tools to make the execution of an Analytic Story in Splunk an automated process. It's as easy as selecting an Analytic Story and clicking "Submit!"
 
 **Benefit:** Instead of running each search individually, analysts can use this app to execute an Analytic Story end-to-end in their environments.
@@ -12,7 +13,7 @@ This application gives you the tools to make the execution of an Analytic Story 
 ----
 
 
-##Tools:
+## Tools:
 
 There are two custom commands in this app that will help you automatically detect and investigate scenarios in your dataset:
 
