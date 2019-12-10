@@ -16,3 +16,8 @@ action.escu.analytic_story = <list>
 
 action.escu.search_type = [detection | investigative | support]
 	* The type of this search
+
+action.escu.entities = <list>
+	* List of entities outputted by this detection search 
+
+

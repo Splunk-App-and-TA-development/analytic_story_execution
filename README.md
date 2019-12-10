@@ -34,7 +34,7 @@ Example:
 The `detect` command will always create a new baseline, so beware that this command will overwrite your previous baselines( working on improving this)
 
 
-##### [Detection Result Object Example](https://jsoneditoronline.org/?id=5527dddc593545baa60c5cfd4b10b2f0)
+##### [Detection Result Object Example]((https://github.com/splunk/analytic_story_execution/blob/develop/README/detection_result_object_examnple.json))
 
 ![](static/object_example.png)
 
@@ -72,20 +72,7 @@ This architecture diagram show cases how the different modules are integrated to
 ## Prerequisites
 
 As of today, the custom search commands leverages specific `key:value` pairs from savedsearches.conf. Please ensure that your savedsearches.conf file has the following:
-```
-action.escu.full_search_name = <string>
-	* Full name of the search
-	* required
-
-action.escu.mappings = [json]
-	* Framework mappings like CIS, Kill Chain, NIST, ATTACK
-
-action.escu.analytic_story = <list>
-	* List of analytic story the search belongs to
-
-action.escu.search_type = [detection | investigative | support]
-	* The type of this search
-```
+ Spec: [savedsearches.conf.spec](https://github.com/splunk/analytic_story_execution/blob/develop/README/savedsearches.conf.spec)
  Example: [savedsearches.conf](https://github.com/splunk/analytic_story_execution/blob/develop/README/savedsearches.conf.example)
 
 
