@@ -25,12 +25,13 @@ There are two custom commands in this app that will help you automatically detec
 **detect:** 
 This is a [Custom Search Generating command](https://dev.splunk.com/enterprise/docs/developapps/customsearchcommands/) that runs all baseline and detection searches in an Analytic Story. 
 
-Syntax:```
+Syntax:
+```
 | detect story="<analytic_story_name>" | `format_detection_results`
 ```
 
-
-Example:```
+Example:
+```
 | detect story="Malicious Powershell" | `format_detection_results`
 ```
 
@@ -44,17 +45,18 @@ Example:```
 **investigate**
 This is a [Custom Search Streaming command](https://dev.splunk.com/enterprise/docs/developapps/customsearchcommands/) that runs all investigative searches on all the `entities` generated using the `detect` command.
 
-Syntax:```
-| detect story="<analytic_story_name>" 
-| `format_detection_results` | investigate
+Syntax:
+```
+| detect story="<analytic_story_name>" | `format_detection_results` | investigate | `format_investigation_results`
 ```
 
-
-Example:```
-| detect story="Malicious Powershell" | `format_detection_results`| investigate
+Example:
+```
+| detect story="Malicious Powershell" | `format_detection_results`| investigate | `format_investigation_results`
 ```
 
-***Note**:  investigate is a streaming command and can be executed after "Detect.
+***Note**:  `investigate` is a streaming command and can be only executed after the `detect` command has generated the result object. The `format_investigation_results` is a macro that leveraged to format the investigation results for friendly display of field names.
+
 
 
 
