@@ -1,8 +1,9 @@
-# Analytic Story Execution App (ASX)
+# Analytic Story Execution (ASX)
 ![](static/appIconAlt_2x.png)
 ----
 
-**Description:** This application gives you the tools to make the execution of an Analytic Story in Splunk an automated process. It's as easy as selecting an Analytic Story and clicking "Submit!"
+##Description: 
+This application gives you the tools to make the execution of an Analytic Story in Splunk an automated process. It's as easy as selecting an Analytic Story and clicking "Submit!"
 
 **Benefit:** Instead of running each search individually, analysts can use this app to execute an Analytic Story end-to-end in their environments.
 
@@ -10,15 +11,15 @@
 
 ----
 
-![](static/screenshot.png)
 
-
-**Tools**
+##Tools:
 
 There are two custom commands in this app that will help you automatically detect and investigate scenarios in your dataset:
 
 1. detect
 2. investigate
+
+----
 
 **detect:** 
 This is a [Custom Search Generating command](https://dev.splunk.com/enterprise/docs/developapps/customsearchcommands/) that runs all baseline and detection searches in an Analytic Story. 
@@ -56,7 +57,9 @@ Example:```
 
 
 
-# Architectural Flow Diagram
+## Architectural Flow Diagram
+
+This architecture diagram show cases how the different modules are integrated to facilitate the end to end execution of an analytic story 
 ![](static/architecture.png)
 
 ## Support
