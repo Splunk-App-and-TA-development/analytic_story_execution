@@ -34,7 +34,7 @@ Example:
 The `detect` command will always create a new baseline, so beware that this command will overwrite your previous baselines( working on improving this)
 
 
-##### [Detection Result Object Example](https://github.com/splunk/analytic_story_execution/blob/develop/README/detection_result_object_examnple.json)
+##### [Detection Result Object Example](https://github.com/splunk/analytic_story_execution/blob/develop/README/detection_result_object_example.json)
 
 
 ----
