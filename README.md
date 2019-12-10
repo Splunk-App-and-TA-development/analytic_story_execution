@@ -6,23 +6,18 @@
 
 This application gives you the tools to make the execution of an Analytic Story in Splunk an automated process. It's as easy as selecting an Analytic Story and clicking "Submit!"
 
-**Benefit:** Instead of running each search individually, analysts can use this app to execute an Analytic Story end-to-end in their environments.
+**Benefit:** Instead of running each search individually, analysts can use this app to execute and preview the results of executing an Analytic Story end-to-end in their environments.
 
 **Value:** Security analysts gain use-case relevant context and correlation when detection events are generated and can automatically trigger the investigative searches from that analytic story to bring back more information about the triggered detection
 
-----
 
+## Custom Search Commands:
 
-## Tools:
-
-There are two custom commands in this app that will help you automatically detect and investigate scenarios in your dataset:
-
-1. detect
-2. investigate
+There are two custom commands in this app that will help you automatically detect and investigate Analytic Stories in your Splunk evnvironment:
 
 ----
 
-**detect:** 
+**1) detect:** 
 This is a [Custom Search Generating command](https://dev.splunk.com/enterprise/docs/developapps/customsearchcommands/) that runs all baseline and detection searches in an Analytic Story. 
 
 Syntax:
@@ -36,13 +31,16 @@ Example:
 ```
 
 ***Note**: The `format_detection_results` is a macro that leveraged to format the detection results for friendly display of field names.
+The `detect` command will always create a new baseline, so beware that this command will overwrite your previous baselines( working on improving this)
 
 
 ##### [Detection Result Object Example](https://jsoneditoronline.org/?id=5527dddc593545baa60c5cfd4b10b2f0)
 
 ![](static/object_example.png)
 
-**investigate**
+----
+
+**2) investigate**
 This is a [Custom Search Streaming command](https://dev.splunk.com/enterprise/docs/developapps/customsearchcommands/) that runs all investigative searches on all the `entities` generated using the `detect` command.
 
 Syntax:
@@ -57,13 +55,39 @@ Example:
 
 ***Note**:  `investigate` is a streaming command and can be only executed after the `detect` command has generated the result object. The `format_investigation_results` is a macro that leveraged to format the investigation results for friendly display of field names.
 
+----
 
 
-
-## Architectural Flow Diagram
+## Architecture
 
 This architecture diagram show cases how the different modules are integrated to facilitate the end to end execution of an analytic story 
 ![](static/architecture.png)
+
+
+## Installation
+
+1. Download the [latest release](https://github.com/splunk/analytic_story_execution/releases) and install on your Splunk Search Head
+2. If you do not have Analytic Stories in your Splunk environment, the Splunk Research team regularly releases security analytic stories via [ES Content Updates](https://splunkbase.splunk.com/app/3449/). We recommend you to install the ESCU application to get started quickly.
+
+## Prerequisites
+
+As of today, the custom search commands leverages specific `key:value` pairs from savedsearches.conf. Please ensure that your savedsearches.conf file has the following:
+```
+action.escu.full_search_name = <string>
+	* Full name of the search
+	* required
+
+action.escu.mappings = [json]
+	* Framework mappings like CIS, Kill Chain, NIST, ATTACK
+
+action.escu.analytic_story = <list>
+	* List of analytic story the search belongs to
+
+action.escu.search_type = [detection | investigative | support]
+	* The type of this search
+```
+ Example: [savedsearches.conf](https://github.com/splunk/analytic_story_execution/blob/develop/README/savedsearches.conf.example)
+
 
 ## Support
 Please use the [GitHub issue tracker](https://github.com/splunk/analytic_story_execution/issues) to submit bugs or request features.
