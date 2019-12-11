@@ -10,13 +10,13 @@ This application gives you the tools to make the execution of an Analytic Story 
 
 **Value:** Security analysts gain use-case relevant context and correlation when detection events are generated and can automatically trigger the investigative searches from that analytic story to bring back more information about the triggered detection
 
-**Not sure what an Analytic Story is?!** 
+>**Not sure what an Analytic Story is?!** 
 
-Check out the [ES Content Updates](https://splunkbase.splunk.com/app/3449/ app on SplunkBase to explore Analytic Stories in Splunk 
+>Check out the [ES Content Updates](https://splunkbase.splunk.com/app/3449/ app on SplunkBase to explore Analytic Stories in Splunk
 
-**OR**
+>**OR**
 
-Check out the Splunk open-source [security-content](https://github.com/splunk/security-content) repository on GitHub, where you can explore/contribute and learn how to build your own Analytic Story! Go forth and conquer!!
+>Check out the Splunk open-source [security-content](https://github.com/splunk/security-content) repository on GitHub, where you can explore/contribute and learn how to build your own Analytic Story! Go forth and conquer!!
 
 ## Custom Search Commands:
 
