@@ -1,6 +1,7 @@
-<nav search_view="search" color="#a64b37">  
-  <view name="analytic_story_execution" default="true"/>
-  <view name="search"/>
-  <view name="story_execution_audit"/>
-  <a href="http://docs.splunk.com/Documentation/ESSOC">Docs</a>
+<nav search_view="search">
+  <view name="security_posture" default='true' />
+  <view name="host_investigator" />
+  <view name="apt_investigator" />
+  <view name="update" />
+  <view name="search" />
 </nav>
