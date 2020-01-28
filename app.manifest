@@ -31,11 +31,6 @@
       "name": null, 
       "text": null, 
       "uri": null
-    }, 
-    "releaseNotes": {
-      "name": null, 
-      "text": "./README.md", 
-      "uri": null
     }
   }, 
   "dependencies": null, 
