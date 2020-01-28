@@ -31,12 +31,12 @@ def get_content(url):
     return response
 
 def untar_data(data, output_path, update):
-    data = base64.b64decode(data)
+    data = base64.b64decode(str(data))
 
     tar_path = os.path.join(output_path,".latest.tar.gz")
 
     with open(tar_path, "w") as outfile:
-        outfile.write(data)
+        outfile.write(str(data))
         outfile.close()
 
     tar = tarfile.open(tar_path)
@@ -140,10 +140,11 @@ if __name__ == "__main__":
     print ("checking for security content updates")
     raw_content = get_content(endpoint)
     content = json.loads(raw_content.text)
+    print("------------------------------------------------\n\n")
     print(content)
     #print ("grabbed latest release version: {0} released: {1}".format(content['name'],content['published_at']))
-    untar_data(content['data'],output_file,update)
-    bump_version(content['name'],output_file,update)
+    untar_data(content['stories'],output_file,update)
+    #bump_version(content['name'],output_file,update)
     print ("extracted latest package to {0}".format(output_file))
     if args.reload:
         print ("reloading splunk app: {0}".format(splunk_app))
