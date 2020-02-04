@@ -1,13 +1,13 @@
 <setup>
-  <block title="Configure this application">
-    <text>Configure the API URL parameters to fetch security content </text>
+  <block title="Configure This App">
+    <text>Configure the remote repository for the detection rules.</text>
   </block>
 
-  <block title="API URL" endpoint="mycustom/customendpoint" entity="settings">
+  <block title="Repository" endpoint="mycustom/customendpoint" entity="settings">
     <text>Use either the https or ssh repository clone url. Keep the Folder field empty if you want to use the whole repository.</text>
 
-      <input field="api_url">
-        <label>Security Content API URL</label>
+      <input field="repository">
+        <label>Repository</label>
         <type>text</type>
       </input>
 
