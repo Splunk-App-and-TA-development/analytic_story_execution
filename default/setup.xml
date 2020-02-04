@@ -1,20 +1,14 @@
 <setup>
-  <block title="Configure This App">
-    <text>Configure the remote repository for the detection rules.</text>
+  <block title="Configure API Url">
+    <text>Configure the API for fetching Splunk Security Content from GITHUB.</text>
   </block>
 
-  <block title="Repository" endpoint="mycustom/customendpoint" entity="settings">
-    <text>Use either the https or ssh repository clone url. Keep the Folder field empty if you want to use the whole repository.</text>
+  <block title="Splunk Security Content API" endpoint="mycustom/customendpoint" entity="settings">
+    <text>Enter the URL to fetch security content via the API. Example: https://content.splunkresearch.com</text>
 
-      <input field="repository">
-        <label>Repository</label>
+      <input field="api_url">
+        <label>API URL</label>
         <type>text</type>
       </input>
-
-      <input field="folder">
-        <label>Folder</label>
-        <type>text</type>
-      </input>
-
   </block>
 </setup>

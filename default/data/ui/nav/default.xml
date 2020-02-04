@@ -1,7 +1,6 @@
 <nav search_view="search">
-  <view name="security_posture" default='true' />
-  <view name="host_investigator" />
-  <view name="apt_investigator" />
-  <view name="update" />
+  <view name="update" default='true' />
+  <view name="configure_execute" />
+  <view name="security_posture" />
   <view name="search" />
 </nav>

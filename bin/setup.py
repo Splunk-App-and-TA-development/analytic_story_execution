@@ -7,7 +7,7 @@ class ConfigApp(admin.MConfigHandler):
   '''
   def setup(self):
     if self.requestedAction == admin.ACTION_EDIT:
-      for arg in ['repository', 'folder']:
+      for arg in ['api_url']:
         self.supportedArgs.addOptArg(arg)
         
   '''
@@ -32,9 +32,7 @@ class ConfigApp(admin.MConfigHandler):
     if None != confDict:
       for stanza, settings in confDict.items():
         for key, val in settings.items():
-          if key in ['repository'] and val in [None, '']:
-            val = ''
-          if key in ['folder'] and val in [None, '']:
+          if key in ['api_url'] and val in [None, '']:
             val = ''
           confInfo[stanza].append(key, val)
           
@@ -46,11 +44,8 @@ class ConfigApp(admin.MConfigHandler):
     name = self.callerArgs.id
     args = self.callerArgs
     
-    if self.callerArgs.data['repository'][0] in [None, '']:
-      self.callerArgs.data['repository'][0] = ''  
-
-    if self.callerArgs.data['folder'][0] in [None, '']:
-      self.callerArgs.data['folder'][0] = ''  
+    if self.callerArgs.data['api_url'][0] in [None, '']:
+      self.callerArgs.data['api_url'][0] = ''  
 
         
     '''
