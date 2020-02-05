@@ -27,10 +27,9 @@ class Executestory(GeneratingCommand):
         asx_lib = ASXLib(USER, PASS, API_URL, SPLUNK_INSTANCE)
     
         x = asx_lib.get_analytics_story('credential_dumping')
-        yield x
-       
-    
-        
+        yield {
+            'status': x
+        }
 
     def __init__(self):
         super(Executestory, self).__init__()
