@@ -1,15 +1,16 @@
-
-from classes.asx_lib import ASXLib
+from asx_lib import ASXLib
 
 API_URL = 'https://content.splunkresearch.com'
-USER = 'asx'
-PASS = 'I-l1ke-Attack-Range!'
-SPLUNK_INSTANCE = '52.10.192.118'
+USER = 'admin'
+PASS = 'h3a2J90pFQoO'
+SPLUNK_INSTANCE = '172.31.7.199'
 
 
 if __name__ == "__main__":
 
     asx_lib = ASXLib(USER, PASS, API_URL, SPLUNK_INSTANCE)
-    #asx_lib.get_analytics_story('credential_dumping')
+    print asx_lib
+    x = asx_lib.get_analytics_story('credential_dumping')
+    print type(x)
     #asx_lib.schedule_analytics_story('credential_dumping', '-60m', 'now', '*/10 * * * *')
-    asx_lib.run_analytics_story('credential_dumping', '-60m', 'now')
+    #asx_lib.run_analytics_story('credential_dumping', '-60m', 'now')
