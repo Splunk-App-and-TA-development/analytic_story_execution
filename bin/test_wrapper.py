@@ -1,9 +1,9 @@
 
-from asx_lib import ASXLib
+from classes.asx_lib import ASXLib
 
 API_URL = 'https://content.splunkresearch.com'
-USER = 'admin'
-PASS = 'asx20_test1!'
+USER = 'asx'
+PASS = 'I-l1ke-Attack-Range!'
 SPLUNK_INSTANCE = '52.10.192.118'
 
 
