@@ -141,9 +141,9 @@ if __name__ == "__main__":
     raw_content = get_content(endpoint)
     content = json.loads(raw_content.text)
     print("------------------------------------------------\n\n")
-    print(content)
+    print(content['stories'])
     #print ("grabbed latest release version: {0} released: {1}".format(content['name'],content['published_at']))
-    untar_data(content['stories'],output_file,update)
+    #untar_data(content['stories'],output_file,update)
     #bump_version(content['name'],output_file,update)
     print ("extracted latest package to {0}".format(output_file))
     if args.reload:
