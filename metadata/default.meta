@@ -1,35 +1,24 @@
-
-# Application-level permissions
-
+## shared Application-level permissions
 []
-access = read : [ * ], write : [ admin, power ]
-
-### EVENT TYPES
-
-[eventtypes]
+access = read : [ * ], write : [ admin ]
 export = system
 
+[savedsearches]
+owner = admin
 
-### PROPS
-
-[props]
-export = system
-
-
-### TRANSFORMS
-
-[transforms]
-export = system
-
-
-### LOOKUPS
-
-[lookups]
-export = system
-
-
-### VIEWSTATES: even normal users should be able to create shared viewstates
-
-[viewstates]
+## Correlation Searches
+[correlationsearches]
 access = read : [ * ], write : [ * ]
-export = system
+
+[governance]
+access = read : [ * ], write : [ * ]
+
+## Managed Configurations
+[managed_configurations]
+access = read : [ * ], write : [ * ]
+
+## Postprocess
+[postprocess]
+access = read : [ * ], write : [ * ]
+
+cd loca	

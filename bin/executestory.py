@@ -25,10 +25,18 @@ class Executestory(GeneratingCommand):
         PASS = 'h3a2J90pFQoO'
         SPLUNK_INSTANCE = '172.31.7.199'
         asx_lib = ASXLib(USER, PASS, API_URL, SPLUNK_INSTANCE)
+        self.logger.info("executestory.pym - Start")
+
     
         x = asx_lib.get_analytics_story('credential_dumping')
+        self.logger.info("executestory.pym - COMPLETED")
+
+
         yield {
-            'status': x
+            '_time': time.time(),
+            '_raw': x,
+            'sourcetype': "_json",
+            'status': "Saved Searches created in local"
         }
 
     def __init__(self):

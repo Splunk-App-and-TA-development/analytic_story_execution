@@ -27,16 +27,15 @@ class ASXLib:
 
         url = self.api_url + '/stories/' + name  + '?community=false'
         story = self.__call_security_content_api(url)
-        print "1---------------------\n"
+       
 
         service = self.__connect_splunk_instance()
-        print "2---------------------\n"
+        
 
         detections = []
         macros = dict()
 
         for obj in story['detections']:
-            print obj
             url = self.api_url + '/detections/' + obj['name'].lower().replace(' ', '_')  + '?community=false'
             detection = self.__call_security_content_api(url)
             if detection:
