@@ -218,19 +218,17 @@ class ASXLib:
             kwargs.update({"action.escu.earliest_time_offset": "3600"})
             kwargs.update({"action.escu.latest_time_offset": "86400"})
             kwargs.update({"disabled": "true"})
-    #        kwargs.update({"enableSched": "1"})
-    #        kwargs.update({"counttype": "number of events"})
-    #        kwargs.update({"relation": "greater than"})
-    #        kwargs.update({"quantity": "0"})
-    #        kwargs.update({"realtime_schedule": "0"})
             kwargs.update({"schedule_window": "auto"})
             kwargs.update({"is_visible": "false"})
 
 
             if 'splunk' in detection['detect']:
                 query = detection['detect']['splunk']['correlation_rule']['search']
+                query = query.encode('ascii', 'ignore').decode('ascii')
             else:
                 query = detection['detect']['uba']['correlation_rule']['search']
+                query = query.encode('ascii', 'ignore').decode('ascii')
             search = kwargs['action.escu.full_search_name']
+            search = search.encode('ascii', 'ignore').decode('ascii')
 
             savedsearch = service.saved_searches.create(search, query, **kwargs)
