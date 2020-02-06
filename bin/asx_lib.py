@@ -3,23 +3,34 @@ import requests
 import json
 import splunklib.results as results
 import splunklib.client as client
+import splunk.mining.dcutils
+
 
 APP_CONTEXT = "Splunk_Analytic_Story_Execution"
+#api_url = 'https://content.splunkresearch.com'
 
 class ASXLib:
+    logger = splunk.mining.dcutils.getLogger()
 
-    def __init__(self, user, password, api_url, splunk_instance, app_context = APP_CONTEXT, api_token = None):
-        self.user = user
-        self.password = password
-        self.app_context = APP_CONTEXT
-        if app_context:
-            self.app_context = app_context
+    def __init__(self, service, api_url):
+        self.service = service
+        # self.password = password
+        # self.app_context = APP_CONTEXT
+        # if app_context:
+        #     self.app_context = app_context
         if api_url.endswith('/'):
             self.api_url = api_url[:-1]
         else:
             self.api_url = api_url
 
-        self.splunk_instance = splunk_instance
+        # self.splunk_instance = splunk_instance
+
+    def list_analytics_stories(self):
+        url = self.api_url + '/stories/?community=false'
+        stories = self.__call_security_content_api(url)
+        self.logger.info("executestory.pym - FETCHING - {0}\n".format(json.dumps(stories['stories'])))
+        #self.logger.info("executestory.pym - Stories - {0}\n".format(stories))
+        return stories
 
 
     def get_analytics_story(self, name):
@@ -29,7 +40,7 @@ class ASXLib:
         story = self.__call_security_content_api(url)
        
 
-        service = self.__connect_splunk_instance()
+        #service = self.__connect_splunk_instance()
         
 
         detections = []
@@ -46,18 +57,18 @@ class ASXLib:
                         macro = self.__call_security_content_api(url)
                         macros[macro['name']] = macro
 
-        self.__generate_standard_macros(service)
+        self.__generate_standard_macros(self.service)
         for macro_name, macro in macros.items():
-            self.__generate_macro(service, macro)
+            self.__generate_macro(self.service, macro)
 
         for detection in detections:
-            kwargs = self.__generate_detection(service, detection)
+            kwargs = self.__generate_detection(self.service, detection)
 
         return 0
 
 
     def schedule_analytics_story(self, name, earliest_time, latest_time, cron_schedule):
-        service = self.__connect_splunk_instance()
+        #service = self.__connect_splunk_instance()
 
         for search in service.saved_searches:
             if 'action.escu.analytic_story' in search:
@@ -78,7 +89,7 @@ class ASXLib:
 
 
     def run_analytics_story(self, name, earliest_time, latest_time):
-        service = self.__connect_splunk_instance()
+        #service = self.__connect_splunk_instance()
 
         for search in service.saved_searches:
             if 'action.escu.analytic_story' in search:
@@ -116,15 +127,15 @@ class ASXLib:
             return resp.json()
 
 
-    def __connect_splunk_instance(self):
-        service = client.connect(
-            host=self.splunk_instance,
-            port=8089,
-            username=self.user,
-            password=self.password,
-            app=self.app_context
-        )
-        return service
+    # def __connect_splunk_instance(self):
+    #     service = client.connect(
+    #         host=self.splunk_instance,
+    #         port=8089,
+    #         username=self.user,
+    #         password=self.password,
+    #         app=self.app_context
+    #     )
+    #     return service
 
     def __generate_macro(self, service, macro):
         service.post('properties/macros', __stanza=macro['name'])

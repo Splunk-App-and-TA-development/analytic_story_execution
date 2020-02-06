@@ -15,26 +15,34 @@ from asx_lib import ASXLib
 @Configuration(streaming=True, local=True)
 class Executestory(GeneratingCommand):
     logger = splunk.mining.dcutils.getLogger()
-    #story = Option(require=True)
+    story = Option(require=False)
+    update = Option(require=False)
 
 
     def generate(self):
 
+        # connect to splunk and start execution
+        port = splunk.getDefault('port')
+        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="Splunk_Analytic_Story_Execution")
+        self.logger.info("executestory.pym - starting run story - {0} ".format(self.update))
+
         API_URL = 'https://content.splunkresearch.com'
-        USER = 'admin'
-        PASS = 'h3a2J90pFQoO'
+        # USER = 'admin'
+        # PASS = 'h3a2J90pFQoO'
         SPLUNK_INSTANCE = '172.31.7.199'
-        asx_lib = ASXLib(USER, PASS, API_URL, SPLUNK_INSTANCE)
+        asx_lib = ASXLib(service, API_URL)
         self.logger.info("executestory.pym - Start")
 
+        if self.update == "true":
+            asx_lib.list_analytics_stories()
+
     
-        x = asx_lib.get_analytics_story('credential_dumping')
+        #x = asx_lib.get_analytics_story(self.story)
         self.logger.info("executestory.pym - COMPLETED")
 
 
         yield {
             '_time': time.time(),
-            '_raw': x,
             'sourcetype': "_json",
             'status': "Saved Searches created in local"
         }

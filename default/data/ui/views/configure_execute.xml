@@ -1,12 +1,6 @@
-<form hideFilters="false">
+<form hideFilters="false" script="run_action.js">
   <label>Configure and Execute</label>
   <fieldset autoRun="false" submitButton="true">
-    <input type="radio" token="source">
-      <label>Source</label>
-      <choice value="local">Local</choice>
-      <choice value="api">API</choice>
-    </input>
-   
     <input type="dropdown" token="story" searchWhenChanged="true">
       <label>Select a story</label>
       <search>
@@ -15,8 +9,6 @@
       <fieldForLabel>story</fieldForLabel>
       <fieldForValue>story</fieldForValue>
     </input>
-     <html>
-    </html>
     <input type="radio" token="mode">
       <label>Mode</label>
       <choice value="now">Now</choice>
@@ -37,26 +29,22 @@
     <input type="text" token="cron" depends="$showCron$">
       <label>Cron</label>
     </input>
-    <input type="text" token="earliest" depends="$showCron$">
-      <label>Earliest</label>
-    </input>
-    <input type="text" token="latest" depends="$showCron$">
-      <label>Latest</label>
-    </input>
-    <input type="time" token="time" depends="$showTimePicker$">
+    <input type="time" token="time">
       <label></label>
       <default>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </default>
     </input>
+    <html>
+    </html>
   </fieldset>
   <row>
     <panel>
       <table>
-        <title>Detection Searches</title>
+        <title>Detection Results</title>
         <search>
-          <query>| rest /services/configs/conf-savedsearches splunk_server=local count=0 | search action.escu.search_type = detection action.escu.analytic_story = "*$story$*" | table action.escu.full_search_name | rename action.escu.full_search_name as "Detection Searches"</query>
+          <query>index=asx</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>

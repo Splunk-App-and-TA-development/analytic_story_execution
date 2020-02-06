@@ -9,7 +9,7 @@ require([
     var mysearch = new SearchManager({
         id: "mysearch",
         autostart: "false",
-        search: "| update" 
+        search: "|executestory update = \"true\"" 
     });
     $(".button1").on("click", function (){
         var ok = confirm("Are you sure?");

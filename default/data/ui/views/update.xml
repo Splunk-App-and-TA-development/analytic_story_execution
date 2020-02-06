@@ -1,9 +1,10 @@
 <dashboard script="run_action.js">
   <label>Update</label>
+  <description>Click this button to fetch available analytic stories from the API</description>
   <row>
     <panel>
       <html>
-         <button class="btn btn-primary button1">Update Detection Rules</button>
+         <button class="btn btn-primary button1">Fetch Analytic Stories</button>
        </html>
     </panel>
   </row>
