@@ -32,6 +32,8 @@ class ASXLib:
         #self.logger.info("executestory.pym - Stories - {0}\n".format(stories))
         return stories
 
+    def get_all_analytic_stories(self):
+
 
     def get_analytics_story(self, name):
         self.story = name
@@ -75,9 +77,9 @@ class ASXLib:
                 if search['action.escu.analytic_story'] == name:
                     mappings = json.loads(search['action.escu.mappings'])
                     if "mitre_technique_id" in mappings:
-                        query = search['search'] + ' | collect index=analytic_story_execution marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                        query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
                     else:
-                        query = search['search'] + ' | collect index=analytic_story_execution '
+                        query = search['search'] + ' | collect index=asx '
                     kwargs =    {"disabled": "false",
                                 "is_scheduled": True,
                                 "cron_schedule": cron_schedule,
@@ -96,9 +98,9 @@ class ASXLib:
                 if search['action.escu.analytic_story'] == name:
                     mappings = json.loads(search['action.escu.mappings'])
                     if "mitre_technique_id" in mappings:
-                        query = search['search'] + ' | collect index=analytic_story_execution marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                        query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
                     else:
-                        query = search['search'] + ' | collect index=analytic_story_execution '
+                        query = search['search'] + ' | collect index=asx '
 
                     kwargs = {  "disabled": False,
                                 "dispatch.earliest_time": earliest_time,

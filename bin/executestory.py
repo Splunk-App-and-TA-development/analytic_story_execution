@@ -29,12 +29,12 @@ class Executestory(GeneratingCommand):
         API_URL = 'https://content.splunkresearch.com'
         # USER = 'admin'
         # PASS = 'h3a2J90pFQoO'
-        SPLUNK_INSTANCE = '172.31.7.199'
+        # SPLUNK_INSTANCE = '172.31.7.199'
         asx_lib = ASXLib(service, API_URL)
         self.logger.info("executestory.pym - Start")
 
         if self.update == "true":
-            asx_lib.list_analytics_stories()
+            x = asx_lib.list_analytics_stories()
 
     
         #x = asx_lib.get_analytics_story(self.story)
@@ -44,6 +44,7 @@ class Executestory(GeneratingCommand):
         yield {
             '_time': time.time(),
             'sourcetype': "_json",
+            '_raw': x,
             'status': "Saved Searches created in local"
         }
 
