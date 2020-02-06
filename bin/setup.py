@@ -1,6 +1,8 @@
 import splunk.admin as admin
 import splunk.entity as en
 
+CONF_FILE = 'asx'
+
 class ConfigApp(admin.MConfigHandler):
   '''
   Set up supported arguments
@@ -11,24 +13,16 @@ class ConfigApp(admin.MConfigHandler):
         self.supportedArgs.addOptArg(arg)
         
   '''
-  Read the initial values of the parameters from the custom file
-      myappsetup.conf, and write them to the setup page. 
-
-  If the app has never been set up,
-      uses .../app_name/default/myappsetup.conf. 
-
-  If app has been set up, looks at 
-      .../local/myappsetup.conf first, then looks at 
-  .../default/myappsetup.conf only if there is no value for a field in
-      .../local/myappsetup.conf
-
-  For boolean fields, may need to switch the true/false setting.
-
-  For text fields, if the conf file says None, set to the empty string.
+  Read the initial values of the parameters from the custom file myappsetup.conf
+  and write them to the setup screen.
+  If the app has never been set up, uses Splunk_Analytic_Story_Execution/default/asx.conf.
+  If app has been set up, looks at local/asx.conf first, then looks at
+  default/asx.conf only if there is no value for a field in local/asx.conf
   '''
 
+
   def handleList(self, confInfo):
-    confDict = self.readConf("settings")
+    confDict = self.readConf(CONF_FILE)
     if None != confDict:
       for stanza, settings in confDict.items():
         for key, val in settings.items():
@@ -40,6 +34,7 @@ class ConfigApp(admin.MConfigHandler):
   After user clicks Save on setup page, take updated parameters,
   normalize them, and save them somewhere
   '''
+
   def handleEdit(self, confInfo):
     name = self.callerArgs.id
     args = self.callerArgs
@@ -47,14 +42,7 @@ class ConfigApp(admin.MConfigHandler):
     if self.callerArgs.data['api_url'][0] in [None, '']:
       self.callerArgs.data['api_url'][0] = ''  
 
-        
-    '''
-    Since we are using a conf file to store parameters, 
-write them to the [setupentity] stanza
-    in app_name/local/myappsetup.conf  
-    '''
-        
-    self.writeConf('settings', 'settings', self.callerArgs.data)
+    self.writeConf('asx', 'settings', self.callerArgs.data)
       
 # initialize the handler
 admin.init(ConfigApp, admin.CONTEXT_NONE)

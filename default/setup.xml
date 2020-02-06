@@ -1,10 +1,7 @@
 <setup>
-  <block title="Configure API Url">
-    <text>Configure the API for fetching Splunk Security Content from GITHUB.</text>
-  </block>
-
-  <block title="Splunk Security Content API" endpoint="mycustom/customendpoint" entity="settings">
-    <text>Enter the URL to fetch security content via the API. Example: https://content.splunkresearch.com</text>
+  <block title="Splunk Security Content API" endpoint="asx/conf" entity="settings">
+    <text>Enter the URL to fetch security content via API. Example: https://content.splunkresearch.com</text>
+	<text>For more information please visit https://docs.splunkresearch.com</text>
 
       <input field="api_url">
         <label>API URL</label>
