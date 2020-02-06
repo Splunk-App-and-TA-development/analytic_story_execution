@@ -75,9 +75,9 @@ class ASXLib:
                 if search['action.escu.analytic_story'] == name:
                     mappings = json.loads(search['action.escu.mappings'])
                     if "mitre_technique_id" in mappings:
-                        query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                        query = search['search'] + ' | collect index=analytic_story_execution marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
                     else:
-                        query = search['search'] + ' | collect index=asx '
+                        query = search['search'] + ' | collect index=analytic_story_execution '
                     kwargs =    {"disabled": "false",
                                 "is_scheduled": True,
                                 "cron_schedule": cron_schedule,
@@ -96,9 +96,9 @@ class ASXLib:
                 if search['action.escu.analytic_story'] == name:
                     mappings = json.loads(search['action.escu.mappings'])
                     if "mitre_technique_id" in mappings:
-                        query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                        query = search['search'] + ' | collect index=analytic_story_execution marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
                     else:
-                        query = search['search'] + ' | collect index=asx '
+                        query = search['search'] + ' | collect index=analytic_story_execution '
 
                     kwargs = {  "disabled": False,
                                 "dispatch.earliest_time": earliest_time,
