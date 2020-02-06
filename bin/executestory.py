@@ -17,6 +17,9 @@ class Executestory(GeneratingCommand):
     logger = splunk.mining.dcutils.getLogger()
     story = Option(require=False)
     update = Option(require=False)
+    now = Option(require=False)
+    cron = Option(require=False)
+    
 
 
     def generate(self):
@@ -33,8 +36,20 @@ class Executestory(GeneratingCommand):
         asx_lib = ASXLib(service, API_URL)
         self.logger.info("executestory.pym - Start")
 
+        if hasattr(self.search_results_info, 'search_et') and hasattr(self.search_results_info, 'search_lt'):
+            earliest_time = self.search_results_info.search_et
+            latest_time = self.search_results_info.search_lt
+
         if self.update == "true":
             x = asx_lib.list_analytics_stories()
+
+
+       
+            
+        x = asx_lib.run_analytics_story('credential_dumping', earliest_time, latest_time)
+
+
+
 
     
         #x = asx_lib.get_analytics_story(self.story)
