@@ -2,7 +2,7 @@ import sys
 import splunk
 import splunklib.client
 import splunklib.results
-from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option
+from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option, Boolean
 import splunk.mining.dcutils
 import splunk.Intersplunk as si
 from asx_lib import ASXLib
