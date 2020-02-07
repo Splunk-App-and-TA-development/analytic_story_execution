@@ -6,30 +6,20 @@ import splunklib.client as client
 import splunk.mining.dcutils
 
 
-APP_CONTEXT = "Splunk_Analytic_Story_Execution"
-#api_url = 'https://content.splunkresearch.com'
-
 class ASXLib:
     logger = splunk.mining.dcutils.getLogger()
 
     def __init__(self, service, api_url):
         self.service = service
-        # self.password = password
-        # self.app_context = APP_CONTEXT
-        # if app_context:
-        #     self.app_context = app_context
         if api_url.endswith('/'):
             self.api_url = api_url[:-1]
         else:
             self.api_url = api_url
 
-        # self.splunk_instance = splunk_instance
-
     def list_analytics_stories(self):
         url = self.api_url + '/stories/?community=false'
         stories = self.__call_security_content_api(url)
         self.logger.info("executestory.pym - FETCHING - {0}\n".format(json.dumps(stories['stories'])))
-        #self.logger.info("executestory.pym - Stories - {0}\n".format(stories))
         return stories
 
     def get_all_analytic_stories(self):
@@ -40,10 +30,6 @@ class ASXLib:
 
         url = self.api_url + '/stories/' + name  + '?community=false'
         story = self.__call_security_content_api(url)
-       
-
-        #service = self.__connect_splunk_instance()
-        
 
         detections = []
         macros = dict()
@@ -70,7 +56,6 @@ class ASXLib:
 
 
     def schedule_analytics_story(self, name, earliest_time, latest_time, cron_schedule):
-        #service = self.__connect_splunk_instance()
 
         for search in service.saved_searches:
             if 'action.escu.analytic_story' in search:

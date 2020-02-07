@@ -23,7 +23,7 @@ class Executestory(GeneratingCommand):
 
         # connect to splunk and start execution
         port = splunk.getDefault('port')
-        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="Splunk_Analytic_Story_Execution")
+        service = splunklib.client.connect(token=self._metadata.searchinfo.session_key, port=port, owner="nobody",app="Splunk_ASX")
         self.logger.info("executestory.pym - starting run story - {0} ".format(self.update))
 
         API_URL = 'https://content.splunkresearch.com'

@@ -1,5 +1,5 @@
 <form hideFilters="false" script="run_action.js">
-  <label>Configure and Execute</label>
+  <label>Execute</label>
   <fieldset autoRun="false" submitButton="true">
     <input type="dropdown" token="story" searchWhenChanged="true">
       <label>Select a story</label>

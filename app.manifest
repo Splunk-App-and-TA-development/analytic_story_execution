@@ -4,7 +4,7 @@
     "title": "Analytic Story Execution", 
     "id": {
       "group": null, 
-      "name": "Splunk_Analytic_Story_Execution",
+      "name": "Splunk_ASX",
       "version": "1.0"
     }, 
     "author": [

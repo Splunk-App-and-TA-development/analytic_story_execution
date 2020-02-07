@@ -1,6 +1,5 @@
 <nav search_view="search">
   <view name="update" default='true' />
-  <view name="configure_execute" />
-  <view name="security_posture" />
+  <view name="execute" />
   <view name="search" />
 </nav>
