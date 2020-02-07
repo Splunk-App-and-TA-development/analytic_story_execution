@@ -19,12 +19,6 @@ class ASXUpdate(GeneratingCommand):
         Defaults to `false`.
         ''', name='list_all', default=False, validate=Boolean())
 
-    update_all = Option(doc='''
-        **Syntax: update_all=<bool>
-        **Description:** When `true`, updates all analytics stories from the API.
-        This process does take a while. Defaults to `false`.
-        ''', name='update_all', default=False, validate=Boolean())
-
     story = Option(doc='''
         **Syntax:** **story=***<story name>*
         **Description:** Story to update.
@@ -67,8 +61,6 @@ class ASXUpdate(GeneratingCommand):
                 'status': "successfully updated story"
             }
 
-        if self.update_all:
-            self.logger.info("asxupdate.py - updating all stories")
         self.logger.info("asxupdate.py - COMPLETED")
 
     def __init__(self):
