@@ -22,8 +22,7 @@ class Executestory(GeneratingCommand):
         **Description:** Story to update.
         ''', name='story', require=True, default=None)
 
-    mode = Option(require=False)
-    #schedule = Option(require=False)
+    mode = Option(require=True)
     cron = Option(require=False)
 
     def getURL(self):
@@ -49,12 +48,17 @@ class Executestory(GeneratingCommand):
         #Runnning the selected analytic story
         if self.mode == "now":
             search_name = asx_lib.run_analytics_story(self.story, earliest_time, latest_time)
+            
             yield {
                     '_time': time.time(),
                     'sourcetype': "_json",
-                    '_raw': {'analytic_story': self.story,'search_name': search_name,'status': "successfully executed the searches in the analytic story"}
+                    '_raw': {
+                            'analytic_story': self.story,
+                            'search_name': search_name,
+                            'mode': self.mode,
+                            'status': "Successfully executed the searches in the analytic story"}
                 
-                }
+                             }
 
         #Schedule the selected analytic story if cron is selected
         if self.mode == "schedule":
@@ -63,9 +67,15 @@ class Executestory(GeneratingCommand):
                 yield {
                         '_time': time.time(),
                         'sourcetype': "_json",
-                        '_raw': {'analytic_story': self.story,'search_name': search_name,'status': "successfully scheduled the analytic story"}
+                        '_raw': {
+                                    'analytic_story': self.story,
+                                    'search_name': search_name,
+                                    'mode': self.mode,
+                                    'cron_schecule': self.cron,
+                                    'status': "Successfully scheduled the analytic story"
+                                }
                         
-                    }
+                      }
 
 
         self.logger.info("executestory.py - completed ASX - {0} ".format(self.story))
