@@ -1,11 +1,32 @@
-<dashboard script="run_action.js">
+<form theme="dark">
   <label>Update</label>
-  <description>Click this button to fetch available analytic stories from the API</description>
+  <description>Select which stories to update below, or select All to update all stories. WARNING updating all stories might take a few minutes.</description>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="multiselect" token="stories">
+      <label>Available Stories</label>
+      <choice value="all">All</choice>
+      <fieldForLabel>name</fieldForLabel>
+      <fieldForValue>name</fieldForValue>
+      <search>
+        <query>| asxupdate list_all=true| spath name</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <delimiter> </delimiter>
+    </input>
+  </fieldset>
   <row>
     <panel>
-      <html>
-         <button class="btn btn-primary button1">Fetch Analytic Stories</button>
-       </html>
+      <event>
+        <title>Update Status</title>
+        <search>
+          <query>| asxupdate story=$stories$</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
     </panel>
   </row>
-</dashboard>
+</form>

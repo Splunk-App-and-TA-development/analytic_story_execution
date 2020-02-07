@@ -1,10 +1,6 @@
-
 import requests
 import json
-import splunklib.results as results
-import splunklib.client as client
 import splunk.mining.dcutils
-
 
 class ASXLib:
     logger = splunk.mining.dcutils.getLogger()
@@ -18,9 +14,9 @@ class ASXLib:
 
     def list_analytics_stories(self):
         url = self.api_url + '/stories/?community=false'
-        stories = self.__call_security_content_api(url)
-        self.logger.info("executestory.pym - FETCHING - {0}\n".format(json.dumps(stories['stories'])))
-        return stories
+        response = self.__call_security_content_api(url)
+        self.logger.info("asx_lib.py - listing stories - {0}\n".format(response))
+        return response['stories']
 
    
     def get_analytics_story(self, name):
@@ -33,6 +29,7 @@ class ASXLib:
         macros = dict()
 
         for obj in story['detections']:
+            self.logger.info("asx_lib.py - grabbing detection - {0}\n".format(json.dumps(obj['name'])))
             url = self.api_url + '/detections/' + obj['name'].lower().replace(' ', '_')  + '?community=false'
             detection = self.__call_security_content_api(url)
             if detection:
@@ -110,17 +107,6 @@ class ASXLib:
         else:
             # this is only temporary, needs to be fixed in API
             return resp.json()
-
-
-    # def __connect_splunk_instance(self):
-    #     service = client.connect(
-    #         host=self.splunk_instance,
-    #         port=8089,
-    #         username=self.user,
-    #         password=self.password,
-    #         app=self.app_context
-    #     )
-    #     return service
 
     def __generate_macro(self, service, macro):
         service.post('properties/macros', __stanza=macro['name'])
