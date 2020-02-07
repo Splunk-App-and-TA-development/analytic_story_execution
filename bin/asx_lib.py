@@ -74,32 +74,43 @@ class ASXLib:
 
 
     def run_analytics_story(self, name, earliest_time, latest_time):
-        #service = self.__connect_splunk_instance()
 
         for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
-                if search['action.escu.analytic_story'] == name:
-                    mappings = json.loads(search['action.escu.mappings'])
-                    if "mitre_technique_id" in mappings:
-                        query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
-                    else:
+
+                #Running Support, not sure if we want to index these results
+
+                if name in search['action.escu.analytic_story']:
+                    if search['action.escu.search_type'] == "support":
                         query = search['search'] + ' | collect index=asx '
 
-                    kwargs = {  "disabled": False,
-                                "dispatch.earliest_time": earliest_time,
-                                "dispatch.latest_time": latest_time,
-                                "search": "|makeresults | eval = \"Hello\" | collect index = analytic_story_execution" }
+                        kwargs = {  "disabled": False,
+                                    "dispatch.earliest_time": earliest_time,
+                                    "dispatch.latest_time": latest_time,
+                                    "search": query}
 
-                    search.update(**kwargs).refresh()
-                    job = search.dispatch()
-                    # sleep(2)
-                    # while True:
-                    #     job.refresh()
-                    #     if job["isDone"] == "1":
-                    #         break
-                    #     sleep(2)
+                        search.update(**kwargs).refresh()
+                        job = search.dispatch()
 
+                #Running Detections
+                if name in search['action.escu.analytic_story']:
+                    if search['action.escu.search_type'] == "detection":
+        
+                        mappings = json.loads(search['action.escu.mappings'])
+                        if "mitre_technique_id" in mappings:
+                            query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                        else:
+                            query = search['search'] + ' | collect index=asx '
 
+                        self.logger.info("executestory.pym - QUERY - {0} ".format(query))
+
+                        kwargs = {  "disabled": False,
+                                    "dispatch.earliest_time": earliest_time,
+                                    "dispatch.latest_time": latest_time,
+                                    "search": query}
+
+                        search.update(**kwargs).refresh()
+                        job = search.dispatch()
 
     def __call_security_content_api(self, url):
         resp = requests.get(url)
@@ -111,16 +122,6 @@ class ASXLib:
             # this is only temporary, needs to be fixed in API
             return resp.json()
 
-
-    # def __connect_splunk_instance(self):
-    #     service = client.connect(
-    #         host=self.splunk_instance,
-    #         port=8089,
-    #         username=self.user,
-    #         password=self.password,
-    #         app=self.app_context
-    #     )
-    #     return service
 
     def __generate_macro(self, service, macro):
         service.post('properties/macros', __stanza=macro['name'])
