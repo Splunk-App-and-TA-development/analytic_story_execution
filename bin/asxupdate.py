@@ -1,5 +1,6 @@
 import sys
 import splunk
+import splunk.entity as entity
 import splunklib.client
 import splunklib.results
 from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option, Boolean
@@ -27,7 +28,7 @@ class ASXUpdate(GeneratingCommand):
         results, dummyresults, settings = si.getOrganizedResults()
 
         # list api_key
-        ent = splunk.entity.getEntities('asx/conf/settings',namespace='Splunk_ASX', owner='nobody',sessionKey=settings['sessionKey'])
+        ent = entity.getEntities('asx/conf/settings',namespace='Splunk_ASX', owner='nobody',sessionKey=settings['sessionKey'])
 
         # return first set of cred
         for value in ent.values():
