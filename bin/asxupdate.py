@@ -3,10 +3,13 @@ import splunk
 import splunk.entity as entity
 import splunklib.client
 import splunklib.results
+import splunklib.binding
+from xml.etree import ElementTree
 from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration, Option, Boolean
 import splunk.mining.dcutils
-import splunk.Intersplunk as si
 from asx_lib import ASXLib
+from splunk.clilib import cli_common as cli
+import time
 
 
 @Configuration(streaming=True, local=True)
@@ -25,14 +28,9 @@ class ASXUpdate(GeneratingCommand):
         ''', name='story', require=True, default=None)
 
     def getURL(self):
-        results, dummyresults, settings = si.getOrganizedResults()
-
-        # list api_key
-        ent = entity.getEntities('asx/conf/settings',namespace='Splunk_ASX', owner='nobody')
-
-        # return first set of cred
-        for value in ent.values():
-            return value['api_url']
+        cfg = cli.getConfStanza('asx','settings')
+        self.logger.info("asx-update.py - asx_conf: {0}".format(cfg['api_url']))
+        return cfg['api_url']
 
     def generate(self):
         # connect to splunk and start execution
@@ -42,20 +40,21 @@ class ASXUpdate(GeneratingCommand):
         asx_lib = ASXLib(service, API_URL)
         self.logger.info("asx-update.py - start")
 
-        if story:
+        if self.story:
             self.logger.info("asx-update.py - updating story {0}".format(self.story))
             asx_lib.get_analytics_story(self.story)
-            
+
+
         if self.update_all:
             self.logger.info("asx-update.py - updating all stories")
         self.logger.info("asx-update.py - COMPLETED")
 
-        #yield {
-        #    '_time': time.time(),
-        #    'sourcetype': "_json",
-        #    '_raw': x,
-        #    'status': "Saved Searches created in local"
-        #}
+        yield {
+            '_time': time.time(),
+            'sourcetype': "_json",
+            '_raw': self.story,
+            'status': "successfully updated story"
+        }
 
     def __init__(self):
         super(ASXUpdate, self).__init__()
