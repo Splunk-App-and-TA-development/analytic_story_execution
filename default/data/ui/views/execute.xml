@@ -1,4 +1,4 @@
-<form hideFilters="false" script="run_action.js">
+<form hideFilters="false" theme="dark">
   <label>Execute</label>
   <fieldset autoRun="false" submitButton="true">
     <input type="dropdown" token="story" searchWhenChanged="true">
@@ -16,11 +16,15 @@
       <change>
         <condition label="Now">
           <set token="showTimePicker">Y</set>
+          <set token="showNowPanel">Y</set>
           <unset token="showCron"></unset>
+          <unset token="showSchedulePanel"></unset>
         </condition>
         <condition label="Schedule">
           <set token="showCron">Y</set>
+          <set token="showSchedulePanel">Y</set>
           <unset token="showTimePicker"></unset>
+          <unset token="showNowPanel"></unset>
         </condition>
       </change>
       <default>now</default>
@@ -40,9 +44,35 @@
     </html>
   </fieldset>
   <row>
+    <panel depends="$showNowPanel$">
+      <event>
+        <title>Execute NOW Status</title>
+        <search>
+          <query>|executestory story = "$story$" mode="$mode$"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+    <panel depends="$showSchedulePanel$">
+      <event>
+        <title>Execute Schedule Status</title>
+        <search>
+          <query>|executestory story = "$story$" mode="$mode$" cron = "$cron$"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+  </row>
+  <row>
     <panel>
       <table>
-        <title>Detection Results</title>
+        <title>Detection Results from index= asx</title>
         <search>
           <query>index=asx</query>
           <earliest>-24h@h</earliest>

@@ -51,8 +51,9 @@ class ASXLib:
 
 
     def schedule_analytics_story(self, name, earliest_time, latest_time, cron_schedule):
+        search_name = []
 
-        for search in service.saved_searches:
+        for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
                 if search['action.escu.analytic_story'] == name:
                     mappings = json.loads(search['action.escu.mappings'])
@@ -68,9 +69,13 @@ class ASXLib:
                                 "search": query
                                 }
                     search.update(**kwargs).refresh()
+                    search_name.append(search['action.escu.full_search_name'])
+                    
+        return search_name
 
 
     def run_analytics_story(self, name, earliest_time, latest_time):
+        search_name = []
 
         for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
@@ -88,6 +93,7 @@ class ASXLib:
 
                         search.update(**kwargs).refresh()
                         job = search.dispatch()
+                        search_name.append(search['action.escu.full_search_name'])
 
                 #Running Detections
                 if name in search['action.escu.analytic_story']:
@@ -99,7 +105,7 @@ class ASXLib:
                         else:
                             query = search['search'] + ' | collect index=asx '
 
-                        self.logger.info("executestory.pym - QUERY - {0} ".format(query))
+                        self.logger.info("executestory.py - Search Name - {0} ".format(search['action.escu.full_search_name']))
 
                         kwargs = {  "disabled": False,
                                     "dispatch.earliest_time": earliest_time,
@@ -108,6 +114,9 @@ class ASXLib:
 
                         search.update(**kwargs).refresh()
                         job = search.dispatch()
+                        search_name.append(search['action.escu.full_search_name'])
+
+        return search_name
 
     def __call_security_content_api(self, url):
         resp = requests.get(url)
