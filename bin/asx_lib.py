@@ -22,9 +22,7 @@ class ASXLib:
         self.logger.info("executestory.pym - FETCHING - {0}\n".format(json.dumps(stories['stories'])))
         return stories
 
-    def get_all_analytic_stories(self):
-
-
+   
     def get_analytics_story(self, name):
         self.story = name
 
@@ -78,7 +76,7 @@ class ASXLib:
     def run_analytics_story(self, name, earliest_time, latest_time):
         #service = self.__connect_splunk_instance()
 
-        for search in service.saved_searches:
+        for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
                 if search['action.escu.analytic_story'] == name:
                     mappings = json.loads(search['action.escu.mappings'])
@@ -90,7 +88,7 @@ class ASXLib:
                     kwargs = {  "disabled": False,
                                 "dispatch.earliest_time": earliest_time,
                                 "dispatch.latest_time": latest_time,
-                                "search": query }
+                                "search": "|makeresults | eval = \"Hello\" | collect index = analytic_story_execution" }
 
                     search.update(**kwargs).refresh()
                     job = search.dispatch()
