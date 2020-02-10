@@ -1,7 +1,7 @@
 <form hideFilters="false" theme="dark">
   <label>Execute</label>
   <fieldset autoRun="false" submitButton="true">
-    <input type="dropdown" token="story" searchWhenChanged="true">
+    <input type="dropdown" token="story" searchWhenChanged="false">
       <label>Select a story</label>
       <search>
         <query>| rest /services/configs/conf-savedsearches splunk_server=local count=0 |search action.escu.search_type = detection | table  action.escu.analytic_story | rename action.escu.analytic_story as story | eval story = "{\"story\": " + story + "}" | spath input=story | rename story{} as story | stats count by story | table story</query>
@@ -30,10 +30,23 @@
       <default>now</default>
       <initialValue>now</initialValue>
     </input>
+    <input type="text" token="execution_id" searchWhenChanged="false" depends="$showNowPanel$">
+      <label>execution identifier</label>
+      <default>17</default>
+    </input>
     <input type="text" token="cron" depends="$showCron$">
       <label>Cron</label>
+      <default>*/15 * * * *</default>
     </input>
-    <input type="time" token="time">
+    <input type="text" token="earliest_time" depends="$showCron$">
+      <label>earliest time</label>
+      <default>-15m</default>
+    </input>
+    <input type="text" token="latest_time" depends="$showCron$">
+      <label>latest time</label>
+      <default>now</default>
+    </input>
+    <input type="time" token="time" depends="$showNowPanel$">
       <label></label>
       <default>
         <earliest>-24h@h</earliest>
@@ -48,9 +61,9 @@
       <event>
         <title>Execute NOW Status</title>
         <search>
-          <query>|executestory story = "$story$" mode="$mode$"</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <query>|executestory story = "$story$" mode="$mode$" execution_id="$execution_id$"</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
         </search>
         <option name="list.drilldown">none</option>
         <option name="refresh.display">progressbar</option>
@@ -60,7 +73,7 @@
       <event>
         <title>Execute Schedule Status</title>
         <search>
-          <query>|executestory story = "$story$" mode="$mode$" cron = "$cron$"</query>
+          <query>|executestory story = "$story$" mode="$mode$" cron = "$cron$" earliest_time="$earliest_time$" latest_time="$latest_time$"</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>
@@ -70,13 +83,15 @@
     </panel>
   </row>
   <row>
-    <panel>
+    <panel depends="$showNowPanel$">
       <table>
-        <title>Detection Results from index= asx</title>
+        <title>Detection Results for execution $execution_id$</title>
         <search>
-          <query>index=asx</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <query>index=asx execution_id="$execution_id$" | stats count by source</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+          <refresh>5s</refresh>
+          <refreshType>delay</refreshType>
         </search>
         <option name="count">10</option>
         <option name="drilldown">none</option>

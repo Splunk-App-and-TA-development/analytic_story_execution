@@ -58,30 +58,33 @@ class ASXLib:
 
         for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
-                if search['action.escu.analytic_story'] == name:
-                    mappings = json.loads(search['action.escu.mappings'])
-                    if not "| collect" in search['search']:
-                        if "mitre_technique_id" in mappings:
-                            query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                if name in search['action.escu.analytic_story']:
+                    if search['action.escu.search_type'] == "detection":
+                        mappings = json.loads(search['action.escu.mappings'])
+                        if not "| collect" in search['search']:
+                            if "mitre_technique_id" in mappings:
+                                query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                            else:
+                                query = search['search'] + ' | collect index=asx '
                         else:
-                            query = search['search'] + ' | collect index=asx '
-                    self.logger.info("asx_lib.py - schedule detection - {} - {}\n".format(search, query))
-                    kwargs =    {"disabled": "false",
-                                "is_scheduled": True,
-                                "cron_schedule": cron_schedule,
-                                "dispatch.earliest_time": earliest_time,
-                                "dispatch.latest_time": latest_time,
-                                "search": query
-                                }
-                    search.update(**kwargs).refresh()
-                    search_name.append(search['action.escu.full_search_name'])
+                            query = search['search']
+                        self.logger.info("asx_lib.py - schedule detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
+                        self.logger.info("asx_lib.py - schedule earliest_time latest_time - {} - {}\n".format(earliest_time, latest_time))
+                        kwargs =    {"disabled": "false",
+                                    "is_scheduled": True,
+                                    "cron_schedule": cron_schedule,
+                                    "dispatch.earliest_time": earliest_time,
+                                    "dispatch.latest_time": latest_time,
+                                    "search": query
+                                    }
+                        search.update(**kwargs).refresh()
+                        search_name.append(search['action.escu.full_search_name'])
 
         return search_name
 
 
-    def run_analytics_story(self, name, earliest_time, latest_time):
+    def run_analytics_story(self, name, earliest_time, latest_time, execution_id):
         search_name = []
-
         for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
 
@@ -107,11 +110,13 @@ class ASXLib:
                         mappings = json.loads(search['action.escu.mappings'])
                         if not "| collect" in search['search']:
                             if "mitre_technique_id" in mappings:
-                                query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                                query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_id=' + execution_id + '"'
                             else:
-                                query = search['search'] + ' | collect index=asx '
+                                query = search['search'] + ' | collect index=asx marker="execution_id=' + execution_id + '"'
+                        else:
+                            query = search['search']
 
-                        self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search, query))
+                        self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
                         kwargs = {  "disabled": False,
                                     "dispatch.earliest_time": earliest_time,
                                     "dispatch.latest_time": latest_time,
@@ -182,7 +187,7 @@ class ASXLib:
                 kwargs.update({"action.escu.entities":  json.dumps(detection['entities']) })
             if 'providing_technologies' in detection['data_metadata']:
                 kwargs.update({"action.escu.providing_technologies":  json.dumps(detection['data_metadata']['providing_technologies']) })
-            kwargs.update({"action.escu.analytic_story":  self.story })
+            kwargs.update({"action.escu.analytic_story":  json.dumps([self.story]) })
 
             if 'splunk' in detection['detect']:
                 correlation_rule = detection['detect']['splunk']['correlation_rule']

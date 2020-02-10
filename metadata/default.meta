@@ -22,6 +22,11 @@ export = system
 export = system
 
 
+### SAVEDSEARCHES
+
+[savedsearches]
+export = system
+
 ### LOOKUPS
 
 [lookups]

@@ -24,6 +24,9 @@ class Executestory(GeneratingCommand):
 
     mode = Option(require=True)
     cron = Option(require=False)
+    execution_id = Option(require=False)
+    earliest_time = Option(require=False)
+    latest_time = Option(require=False)
 
     def getURL(self):
         cfg = cli.getConfStanza('asx','settings')
@@ -31,6 +34,11 @@ class Executestory(GeneratingCommand):
         return cfg['api_url']
 
     def generate(self):
+
+        if self.earliest_time:
+            earliest_time = self.earliest_time
+        if self.latest_time:
+            latest_time = self.latest_time
 
         # connect to splunk and start execution
         port = splunk.getDefault('port')
@@ -40,15 +48,17 @@ class Executestory(GeneratingCommand):
         API_URL = self.getURL()
         asx_lib = ASXLib(service, API_URL)
 
-        #time attributes from time picker
-        if hasattr(self.search_results_info, 'search_et') and hasattr(self.search_results_info, 'search_lt'):
-            earliest_time = self.search_results_info.search_et
-            latest_time = self.search_results_info.search_lt
 
         #Runnning the selected analytic story
         if self.mode == "now":
-            search_name = asx_lib.run_analytics_story(self.story, earliest_time, latest_time)
-            
+
+            #time attributes from time picker
+            if hasattr(self.search_results_info, 'search_et') and hasattr(self.search_results_info, 'search_lt'):
+                earliest_time = self.search_results_info.search_et
+                latest_time = self.search_results_info.search_lt
+
+            search_name = asx_lib.run_analytics_story(self.story, earliest_time, latest_time, self.execution_id)
+
             yield {
                     '_time': time.time(),
                     'sourcetype': "_json",
@@ -57,7 +67,7 @@ class Executestory(GeneratingCommand):
                             'search_name': search_name,
                             'mode': self.mode,
                             'status': "Successfully executed the searches in the analytic story"}
-                
+
                              }
 
         #Schedule the selected analytic story if cron is selected
@@ -74,7 +84,7 @@ class Executestory(GeneratingCommand):
                                     'cron_schecule': self.cron,
                                     'status': "Successfully scheduled the analytic story"
                                 }
-                        
+
                       }
 
 
@@ -82,6 +92,5 @@ class Executestory(GeneratingCommand):
 
     def __init__(self):
         super(Executestory, self).__init__()
-
 
 dispatch(Executestory, sys.argv, sys.stdin, sys.stdout, __name__)
