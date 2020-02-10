@@ -18,7 +18,7 @@ class ASXLib:
         self.logger.info("asx_lib.py - listing stories - {0}\n".format(response))
         return response['stories']
 
-   
+
     def get_analytics_story(self, name):
         self.story = name
 
@@ -36,15 +36,18 @@ class ASXLib:
                 detections.append(detection)
                 for macro in detection['detect']['splunk']['correlation_rule']['macros']:
                     if not (macro in macros):
+                        self.logger.info("asx_lib.py - grabbing macro - {0}\n".format(macro))
                         url = self.api_url + '/macros/' + macro  + '?community=false'
                         macro = self.__call_security_content_api(url)
                         macros[macro['name']] = macro
 
         self.__generate_standard_macros(self.service)
         for macro_name, macro in macros.items():
+            self.logger.info("asx_lib.py - generate macros.conf")
             self.__generate_macro(self.service, macro)
 
         for detection in detections:
+            self.logger.info("asx_lib.py - generate savedsearches.conf")
             kwargs = self.__generate_detection(self.service, detection)
 
         return 0
@@ -57,10 +60,12 @@ class ASXLib:
             if 'action.escu.analytic_story' in search:
                 if search['action.escu.analytic_story'] == name:
                     mappings = json.loads(search['action.escu.mappings'])
-                    if "mitre_technique_id" in mappings:
-                        query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
-                    else:
-                        query = search['search'] + ' | collect index=asx '
+                    if not "| collect" in search['search']:
+                        if "mitre_technique_id" in mappings:
+                            query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                        else:
+                            query = search['search'] + ' | collect index=asx '
+                    self.logger.info("asx_lib.py - schedule detection - {} - {}\n".format(search, query))
                     kwargs =    {"disabled": "false",
                                 "is_scheduled": True,
                                 "cron_schedule": cron_schedule,
@@ -70,7 +75,7 @@ class ASXLib:
                                 }
                     search.update(**kwargs).refresh()
                     search_name.append(search['action.escu.full_search_name'])
-                    
+
         return search_name
 
 
@@ -98,15 +103,15 @@ class ASXLib:
                 #Running Detections
                 if name in search['action.escu.analytic_story']:
                     if search['action.escu.search_type'] == "detection":
-        
+
                         mappings = json.loads(search['action.escu.mappings'])
-                        if "mitre_technique_id" in mappings:
-                            query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
-                        else:
-                            query = search['search'] + ' | collect index=asx '
+                        if not "| collect" in search['search']:
+                            if "mitre_technique_id" in mappings:
+                                query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                            else:
+                                query = search['search'] + ' | collect index=asx '
 
-                        self.logger.info("executestory.py - Search Name - {0} ".format(search['action.escu.full_search_name']))
-
+                        self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search, query))
                         kwargs = {  "disabled": False,
                                     "dispatch.earliest_time": earliest_time,
                                     "dispatch.latest_time": latest_time,
