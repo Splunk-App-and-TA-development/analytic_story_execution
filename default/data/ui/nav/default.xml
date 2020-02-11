@@ -1,5 +1,6 @@
 <nav search_view="search">
-  <view name="update" default='true' />
+  <view name="home" default='true' />
+  <view name="update" />
   <view name="execute" />
   <view name="search" />
 </nav>

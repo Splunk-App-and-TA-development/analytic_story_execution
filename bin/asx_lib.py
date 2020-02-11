@@ -34,12 +34,13 @@ class ASXLib:
             detection = self.__call_security_content_api(url)
             if detection:
                 detections.append(detection)
-                for macro in detection['detect']['splunk']['correlation_rule']['macros']:
-                    if not (macro in macros):
-                        self.logger.info("asx_lib.py - grabbing macro - {0}\n".format(macro))
-                        url = self.api_url + '/macros/' + macro  + '?community=false'
-                        macro = self.__call_security_content_api(url)
-                        macros[macro['name']] = macro
+                if 'macros' in detection['detect']['splunk']['correlation_rule']:
+                    for macro in detection['detect']['splunk']['correlation_rule']['macros']:
+                        if not (macro in macros):
+                            self.logger.info("asx_lib.py - grabbing macro - {0}\n".format(macro))
+                            url = self.api_url + '/macros/' + macro  + '?community=false'
+                            macro = self.__call_security_content_api(url)
+                            macros[macro['name']] = macro
 
         self.__generate_standard_macros(self.service)
         for macro_name, macro in macros.items():
