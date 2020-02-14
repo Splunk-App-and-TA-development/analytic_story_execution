@@ -2,9 +2,8 @@
   <label>Update</label>
   <description>Select which stories to update below, or select All to update all stories. WARNING updating all stories might take a few minutes.</description>
   <fieldset submitButton="true" autoRun="false">
-    <input type="multiselect" token="stories">
+    <input type="dropdown" token="stories">
       <label>Available Stories</label>
-      <choice value="all">All</choice>
       <fieldForLabel>name</fieldForLabel>
       <fieldForValue>name</fieldForValue>
       <search>
@@ -12,7 +11,6 @@
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
-      <delimiter> </delimiter>
     </input>
   </fieldset>
   <row>
