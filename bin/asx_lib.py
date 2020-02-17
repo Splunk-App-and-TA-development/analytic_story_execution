@@ -109,13 +109,16 @@ class ASXLib:
                     if search['action.escu.search_type'] == "detection":
 
                         mappings = json.loads(search['action.escu.mappings'])
-                        if not "| collect" in search['search']:
-                            if "mitre_technique_id" in mappings:
-                                query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_id=' + execution_id + '"'
-                            else:
-                                query = search['search'] + ' | collect index=asx marker="execution_id=' + execution_id + '"'
+                        if "| collect" in search['search']:
+                            query = search['search'].split("| collect",1)[0]
                         else:
                             query = search['search']
+
+                        if "mitre_technique_id" in mappings:
+                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_id=' + execution_id + '"'
+                        else:
+                            query = query + ' | collect index=asx marker="execution_id=' + execution_id + '"'
+
 
                         self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
                         kwargs = {  "disabled": False,
