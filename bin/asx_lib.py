@@ -62,13 +62,16 @@ class ASXLib:
                 if name in search['action.escu.analytic_story']:
                     if search['action.escu.search_type'] == "detection":
                         mappings = json.loads(search['action.escu.mappings'])
-                        if not "| collect" in search['search']:
-                            if "mitre_technique_id" in mappings:
-                                query = search['search'] + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
-                            else:
-                                query = search['search'] + ' | collect index=asx '
+                        if "| collect" in search['search']:
+                            query = search['search'].split("| collect",1)[0]
                         else:
                             query = search['search']
+
+                        if "mitre_technique_id" in mappings:
+                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                        else:
+                            query = query + ' | collect index=asx '
+
                         self.logger.info("asx_lib.py - schedule detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
                         self.logger.info("asx_lib.py - schedule earliest_time latest_time - {} - {}\n".format(earliest_time, latest_time))
                         kwargs =    {"disabled": "false",
