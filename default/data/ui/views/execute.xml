@@ -81,9 +81,9 @@
   <row>
     <panel depends="$showNowPanel$">
       <table>
-        <title>Detection Results for execution $execution_id$</title>
+        <title>Detection Results for last execution</title>
         <search>
-          <query>index=asx | eventstats max(execution_time) as max_execution_time | where execution_time=max_execution_time | convert timeformat="%m/%d/%Y %H:%M:%S" ctime(execution_time) | fillnull | stats count by source dest user execution_time</query>
+          <query>index=asx | eventstats max(execution_time) as max_execution_time | where execution_time=max_execution_time | convert timeformat="%m/%d/%Y %H:%M:%S" ctime(execution_time) | fillnull | stats count by source dest execution_time</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
           <refresh>5s</refresh>
