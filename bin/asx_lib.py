@@ -1,6 +1,7 @@
 import requests
 import json
 import splunk.mining.dcutils
+import time
 
 class ASXLib:
     logger = splunk.mining.dcutils.getLogger()
@@ -87,8 +88,9 @@ class ASXLib:
         return search_name
 
 
-    def run_analytics_story(self, name, earliest_time, latest_time, execution_time):
+    def run_analytics_story(self, name, earliest_time, latest_time):
         search_name = []
+        execution_time = str(time.time())
         for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
 

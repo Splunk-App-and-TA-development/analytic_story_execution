@@ -30,10 +30,6 @@
       <default>now</default>
       <initialValue>now</initialValue>
     </input>
-    <input type="text" token="execution_id" searchWhenChanged="false" depends="$showNowPanel$">
-      <label>execution identifier</label>
-      <default>17</default>
-    </input>
     <input type="text" token="cron" depends="$showCron$">
       <label>Cron</label>
       <default>*/15 * * * *</default>
@@ -61,7 +57,7 @@
       <event>
         <title>Execute NOW Status</title>
         <search>
-          <query>|executestory story = "$story$" mode="$mode$" execution_time=_time</query>
+          <query>|executestory story = "$story$" mode="$mode$"</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
         </search>
@@ -87,7 +83,7 @@
       <table>
         <title>Detection Results for execution $execution_id$</title>
         <search>
-          <query>index=asx execution_id="$execution_id$" | fillnull  | stats count by source, user, dest</query>
+          <query>index=asx | eventstats max(execution_time) as max_execution_time | where execution_time=max_execution_time | convert timeformat="%m/%d/%Y %H:%M:%S" ctime(execution_time) | fillnull | stats count by source dest user execution_time</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
           <refresh>5s</refresh>

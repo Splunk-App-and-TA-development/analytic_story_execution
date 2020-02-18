@@ -24,7 +24,6 @@ class Executestory(GeneratingCommand):
 
     mode = Option(require=True)
     cron = Option(require=False)
-    execution_time = Option(require=False)
     earliest_time = Option(require=False)
     latest_time = Option(require=False)
 
@@ -57,7 +56,7 @@ class Executestory(GeneratingCommand):
                 earliest_time = self.search_results_info.search_et
                 latest_time = self.search_results_info.search_lt
 
-            search_name = asx_lib.run_analytics_story(self.story, earliest_time, latest_time, self.execution_time)
+            search_name = asx_lib.run_analytics_story(self.story, earliest_time, latest_time)
 
             yield {
                     '_time': time.time(),
