@@ -61,7 +61,7 @@
       <event>
         <title>Execute NOW Status</title>
         <search>
-          <query>|executestory story = "$story$" mode="$mode$" execution_id="$execution_id$"</query>
+          <query>|executestory story = "$story$" mode="$mode$" execution_time=_time</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
         </search>
@@ -87,7 +87,7 @@
       <table>
         <title>Detection Results for execution $execution_id$</title>
         <search>
-          <query>index=asx execution_id="$execution_id$" | stats count by source</query>
+          <query>index=asx execution_id="$execution_id$" | fillnull  | stats count by source, user, dest</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
           <refresh>5s</refresh>

@@ -68,9 +68,9 @@ class ASXLib:
                             query = search['search']
 
                         if "mitre_technique_id" in mappings:
-                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + '"'
+                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_type=scheduled"'
                         else:
-                            query = query + ' | collect index=asx '
+                            query = query + ' | collect index=asx marker="execution_type=scheduled"'
 
                         self.logger.info("asx_lib.py - schedule detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
                         self.logger.info("asx_lib.py - schedule earliest_time latest_time - {} - {}\n".format(earliest_time, latest_time))
@@ -87,7 +87,7 @@ class ASXLib:
         return search_name
 
 
-    def run_analytics_story(self, name, earliest_time, latest_time, execution_id):
+    def run_analytics_story(self, name, earliest_time, latest_time, execution_time):
         search_name = []
         for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
@@ -118,12 +118,13 @@ class ASXLib:
                             query = search['search']
 
                         if "mitre_technique_id" in mappings:
-                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_id=' + execution_id + '"'
+                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_type=adhoc, execution_time=' + execution_time + '"'
                         else:
-                            query = query + ' | collect index=asx marker="execution_id=' + execution_id + '"'
+                            query = query + ' | collect index=asx marker="execution_type=adhoc, execution_time=' + execution_time + '"'
 
 
                         self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
+
                         kwargs = {  "disabled": False,
                                     "dispatch.earliest_time": earliest_time,
                                     "dispatch.latest_time": latest_time,
