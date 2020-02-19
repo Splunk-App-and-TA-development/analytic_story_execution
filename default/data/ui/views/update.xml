@@ -1,8 +1,8 @@
 <form theme="dark">
   <label>Update</label>
-  <description>Select which stories to update below, or select All to update all stories. WARNING updating all stories might take a few minutes.</description>
+  <description>Select which stories to update below. WARNING All is currently disabled for this release.</description>
   <fieldset submitButton="true" autoRun="false">
-    <input type="dropdown" token="stories">
+    <input type="multiselect" token="stories">
       <label>Available Stories</label>
       <fieldForLabel>name</fieldForLabel>
       <fieldForValue>name</fieldForValue>
@@ -11,6 +11,10 @@
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
+      <delimiter>,</delimiter>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+      <choice value="all">All</choice>
     </input>
   </fieldset>
   <row>
@@ -27,4 +31,3 @@
       </event>
     </panel>
   </row>
-</form>

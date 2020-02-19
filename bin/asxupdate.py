@@ -40,7 +40,6 @@ class ASXUpdate(GeneratingCommand):
         if self.list_all:
             self.logger.info("asxupdate.py - list all stories")
             stories = asx_lib.list_analytics_stories()
-
             for story in stories:
                 self.logger.info("asxupdate.py - processing story {0}".format(story))
 
@@ -50,16 +49,32 @@ class ASXUpdate(GeneratingCommand):
                     '_raw': {'name': story},
                     'status': "successfully listed all stories"
                 }
-
-        if self.story:
-            self.logger.info("asxupdate.py - updating story {0}".format(self.story))
-            asx_lib.get_analytics_story(self.story)
-            yield {
-                '_time': time.time(),
-                'sourcetype': "_json",
-                '_raw': self.story,
-                'status': "successfully updated story"
-            }
+        # only updating specific stories
+        if self.story and self.story != "all":
+            self.logger.info("asxupdate.py - stories to update {0}".format(self.story))
+            stories = self.story.split(",")
+            for story in stories:
+                self.logger.info("asxupdate.py - updating story {0}".format(story))
+                asx_lib.get_analytics_story(story)
+                yield {
+                    '_time': time.time(),
+                    'sourcetype': "_json",
+                    '_raw': story,
+                    'status': "successfully updated story"
+                }
+        # lets update all stories, disabled until spec 3.0 change
+        else:
+            self.logger.info("asxupdate.py - updating ALL stories")
+            stories = asx_lib.list_analytics_stories()
+            for story in stories:
+                self.logger.info("asxupdate.py - updating story {0}".format(story))
+                #asx_lib.get_analytics_story(story)
+                yield {
+                    '_time': time.time(),
+                    'sourcetype': "_json",
+                    '_raw': story,
+                    'status': "successfully updated story"
+                }
 
         self.logger.info("asxupdate.py - COMPLETED")
 
