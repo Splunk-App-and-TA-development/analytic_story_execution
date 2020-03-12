@@ -43,7 +43,6 @@ class ASXLib:
                         if not (baseline in baselines):
                             self.logger.info("asx_lib.py - grabbing baseline - {0}\n".format(baseline))
                             url = self.api_url + '/baselines/' + baseline + '?community=false'
-                            self.logger.info(url)
                             baseline = self.__call_security_content_api(url)
                             baselines[baseline['name']] = baseline
 
@@ -52,7 +51,6 @@ class ASXLib:
                         if not (macro in macros):
                             self.logger.info("asx_lib.py - grabbing macro - {0}\n".format(macro))
                             url = self.api_url + '/macros/' + macro + '?community=false'
-                            self.logger.info(url)
                             macro = self.__call_security_content_api(url)
                             macros[macro['name']] = macro
 
@@ -195,7 +193,7 @@ class ASXLib:
             kwargs.update({"action.escu.analytic_story": json.dumps([self.story])})
 
             if 'splunk' in baseline['baseline']:
-                correlation_rule = detection['detect']['splunk']['correlation_rule']
+                correlation_rule = baseline['baseline']['splunk']
 
             if 'cron_schedule' in correlation_rule['schedule']:
                 kwargs.update({"cron_schedule":  correlation_rule['schedule']['cron_schedule']})
@@ -204,7 +202,7 @@ class ASXLib:
             if 'latest_time' in correlation_rule['schedule']:
                 kwargs.update({"dispatch.latest_time":  correlation_rule['schedule']['latest_time']})
 
-            if 'providing_technologies' in basesline['data_metadata']:
+            if 'providing_technologies' in baseline['data_metadata']:
                 kwargs.update({"action.escu.providing_technologies":  json.dumps(baseline['data_metadata']['providing_technologies'])})
             if 'eli5' in baseline:
                 kwargs.update({"action.escu.eli5":  baseline['eli5']})
