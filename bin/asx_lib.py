@@ -112,11 +112,10 @@ class ASXLib:
             if 'action.escu.analytic_story' in search:
 
                 #Running Support, not sure if we want to index these results
-
                 if name in search['action.escu.analytic_story']:
                     if search['action.escu.search_type'] == "support":
                         query = search['search'] + ' | collect index=asx '
-
+                        self.logger.info("asx_lib.py - run baseline - {} - {}\n".format(search['action.escu.full_search_name'],query))
                         kwargs = {  "disabled": False,
                                     "dispatch.earliest_time": earliest_time,
                                     "dispatch.latest_time": latest_time,
@@ -140,7 +139,6 @@ class ASXLib:
                             query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_type=adhoc, execution_time=' + execution_time + '"'
                         else:
                             query = query + ' | collect index=asx marker="execution_type=adhoc, execution_time=' + execution_time + '"'
-
 
                         self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
 
