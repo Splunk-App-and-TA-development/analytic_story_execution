@@ -78,6 +78,19 @@ class ASXLib:
         for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
                 if name in search['action.escu.analytic_story']:
+                    if search['action.escu.search_type'] == "support":
+                        self.logger.info("asx_lib.py - schedule baseline - {} - {}\n".format(search['action.escu.full_search_name'], query))
+                        self.logger.info("asx_lib.py - schedule baseline earliest_time latest_time - {} - {}\n".format(earliest_time, latest_time))
+                        kwargs =    {"disabled": "false",
+                                    "is_scheduled": True,
+                                    "cron_schedule": cron_schedule,
+                                    "dispatch.earliest_time": earliest_time,
+                                    "dispatch.latest_time": latest_time,
+                                    "search": search['search']
+                                    }
+                        search.update(**kwargs).refresh()
+                        search_name.append(search['action.escu.full_search_name'])
+                        
                     if search['action.escu.search_type'] == "detection":
                         mappings = json.loads(search['action.escu.mappings'])
                         if "| collect" in search['search']:
@@ -91,7 +104,7 @@ class ASXLib:
                             query = query + ' | collect index=asx marker="execution_type=scheduled"'
 
                         self.logger.info("asx_lib.py - schedule detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
-                        self.logger.info("asx_lib.py - schedule earliest_time latest_time - {} - {}\n".format(earliest_time, latest_time))
+                        self.logger.info("asx_lib.py - schedule detection earliest_time latest_time - {} - {}\n".format(earliest_time, latest_time))
                         kwargs =    {"disabled": "false",
                                     "is_scheduled": True,
                                     "cron_schedule": cron_schedule,
@@ -323,4 +336,3 @@ class ASXLib:
             search = search.encode('ascii', 'ignore').decode('ascii')
 
             savedsearch = service.saved_searches.create(search, query, **kwargs)
-
