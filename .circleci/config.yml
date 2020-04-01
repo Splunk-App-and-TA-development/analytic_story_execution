@@ -62,16 +62,16 @@ jobs:
               rm -rf analytic_story_execution/.circleci
               rm -rf analytic_story_execution/.gitignore
               CONTENT_VERSION=0.1
-              mv analytic_story_execution Splunk_Analytic_Story_Execution
-              slim package -o upload Splunk_Analytic_Story_Execution
-              cp upload/*.tar.gz Splunk_Analytic_Story_Execution-latest.tar.gz
+              mv analytic_story_execution Splunk_ASX
+              slim package -o upload Splunk_ASX
+              cp upload/*.tar.gz Splunk_ASX-latest.tar.gz
       - store_artifacts:
           path: ~/dist/upload
           destination: package/
       - persist_to_workspace:
           root: ~/dist
           paths:
-             - Splunk_Analytic_Story_Execution-latest.tar.gz
+             - Splunk_ASX-latest.tar.gz
   validate-content:
     executor: content-executor
     steps:
@@ -99,21 +99,21 @@ jobs:
           command: |
             cd appinspect-latest
             source venv/bin/activate
-            splunk-appinspect inspect ~/dist/Splunk_Analytic_Story_Execution-latest.tar.gz --included-tags=cloud
+            splunk-appinspect inspect ~/dist/Splunk_ASX-latest.tar.gz --included-tags=cloud
       - persist_to_workspace:
           root: ~/dist/
           paths:
-              - Splunk_Analytic_Story_Execution-latest.tar.gz
+              - Splunk_ASX-latest.tar.gz
   publish-github-release:
     docker:
       - image: cibuilds/github:0.10
     steps:
       - attach_workspace:
-          at: ~/dist/Splunk_Analytic_Story_Execution-latest.tar.gz
+          at: ~/dist/Splunk_ASX-latest.tar.gz
       - run:
           name: publish release on github
           command: |
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} ~/dist/Splunk_Analytic_Story_Execution-latest.tar.gz
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${CIRCLE_TAG} ~/dist/Splunk_ASX-latest.tar.gz
 workflows:
   version: 2.1
   validate-and-build:
