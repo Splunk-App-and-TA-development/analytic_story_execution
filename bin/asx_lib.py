@@ -90,7 +90,7 @@ class ASXLib:
                                     }
                         search.update(**kwargs).refresh()
                         search_name.append(search['action.escu.full_search_name'])
-                        
+
                     if search['action.escu.search_type'] == "detection":
                         mappings = json.loads(search['action.escu.mappings'])
                         if "| collect" in search['search']:
@@ -121,48 +121,52 @@ class ASXLib:
     def run_analytics_story(self, name, earliest_time, latest_time):
         search_name = []
         execution_time = str(time.time())
+        saved_searches = []
+
         for search in self.service.saved_searches:
             if 'action.escu.analytic_story' in search:
-
-                #Running Support, not sure if we want to index these results
                 if name in search['action.escu.analytic_story']:
                     if search['action.escu.search_type'] == "support":
-                        query = search['search'] + ' | collect index=asx '
-                        self.logger.info("asx_lib.py - run baseline - {} - {}\n".format(search['action.escu.full_search_name'],query))
-                        kwargs = {  "disabled": False,
-                                    "dispatch.earliest_time": earliest_time,
-                                    "dispatch.latest_time": latest_time,
-                                    "search": query}
+                        saved_searches.insert(0,search)
+                    else:
+                        saved_searches.append(search)
 
-                        search.update(**kwargs).refresh()
-                        job = search.dispatch()
-                        search_name.append(search['action.escu.full_search_name'])
+        for search in saved_searches:
+            if search['action.escu.search_type'] == "support":
+                query = search['search']
+                self.logger.info("asx_lib.py - run baseline - {} - {}\n".format(search['action.escu.full_search_name'],query))
+                kwargs = {  "exec_mode": "blocking",
+                            "disabled": False,
+                            "dispatch.earliest_time": earliest_time,
+                            "dispatch.latest_time": latest_time}
+                jobs = self.service.jobs
+                job = jobs.create(query, **kwargs)
+                search_name.append(search['action.escu.full_search_name'])
 
-                #Running Detections
-                if name in search['action.escu.analytic_story']:
-                    if search['action.escu.search_type'] == "detection":
+            #Running Detections
+            if search['action.escu.search_type'] == "detection":
 
-                        mappings = json.loads(search['action.escu.mappings'])
-                        if "| collect" in search['search']:
-                            query = search['search'].split("| collect",1)[0]
-                        else:
-                            query = search['search']
+                mappings = json.loads(search['action.escu.mappings'])
+                if "| collect" in search['search']:
+                    query = search['search'].split("| collect",1)[0]
+                else:
+                    query = search['search']
 
-                        if "mitre_technique_id" in mappings:
-                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_type=adhoc, execution_time=' + execution_time + '"'
-                        else:
-                            query = query + ' | collect index=asx marker="execution_type=adhoc, execution_time=' + execution_time + '"'
+                if "mitre_technique_id" in mappings:
+                    query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_type=adhoc, execution_time=' + execution_time + '"'
+                else:
+                    query = query + ' | collect index=asx marker="execution_type=adhoc, execution_time=' + execution_time + '"'
 
-                        self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
+                self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
 
-                        kwargs = {  "disabled": False,
-                                    "dispatch.earliest_time": earliest_time,
-                                    "dispatch.latest_time": latest_time,
-                                    "search": query}
+                kwargs = {  "disabled": False,
+                            "dispatch.earliest_time": earliest_time,
+                            "dispatch.latest_time": latest_time,
+                            "search": query}
 
-                        search.update(**kwargs).refresh()
-                        job = search.dispatch()
-                        search_name.append(search['action.escu.full_search_name'])
+                search.update(**kwargs).refresh()
+                job = search.dispatch()
+                search_name.append(search['action.escu.full_search_name'])
 
         return search_name
 
