@@ -79,6 +79,7 @@ class ASXLib:
             if 'action.escu.analytic_story' in search:
                 if name in search['action.escu.analytic_story']:
                     if search['action.escu.search_type'] == "support":
+                        query = search['search']
                         self.logger.info("asx_lib.py - schedule baseline - {} - {}\n".format(search['action.escu.full_search_name'], query))
                         self.logger.info("asx_lib.py - schedule baseline earliest_time latest_time - {} - {}\n".format(earliest_time, latest_time))
                         kwargs =    {"disabled": "false",
