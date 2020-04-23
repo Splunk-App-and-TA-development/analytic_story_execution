@@ -4,7 +4,7 @@
 
 ## Description:
 
-This application allows you to execute and schedule [Splunk's Analytic Stories](https://github.com/splunk/security-content). Instead of running each search individually, analysts can use this app to execute and preview the results of executing or scheduling an Analytic Story end-to-end in their environments. The results of the Analytic Stories are stored in the ```index=asx```, which are used to popualte the Home dashboard. Furthermore, Analytic Story Execution is capable of updating its Analytic Stories from the [security content api](https://docs.splunkresearch.com/?version=latest).
+This application allows you to execute and schedule [Splunk's Analytic Stories](https://github.com/splunk/security-content). Instead of running each search individually, analysts can use this app to execute and preview the results of executing or scheduling an Analytic Story end-to-end in their environments. The results of the Analytic Stories are stored in the ```index=asx```, which are used to populate the Home dashboard. Furthermore, Analytic Story Execution is capable of updating its Analytic Stories from the [security content api](https://docs.splunkresearch.com/?version=latest).
 
 ![Home](pictures/asx_home_dashboard.png)
 
