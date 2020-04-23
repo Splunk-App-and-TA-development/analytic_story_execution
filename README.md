@@ -19,6 +19,15 @@ This application allows you to execute and schedule [Splunk's Analytic Stories](
 2. If you do not have Analytic Stories in your Splunk environment, the Splunk Research team regularly releases security analytic stories via [ES Content Updates](https://splunkbase.splunk.com/app/3449/). We recommend you to install the ESCU application to get started quickly.
 
 
+The app requires the creation of an `index=asx`. Example **index.conf** entry:
+
+```
+[asx]
+homePath   = $SPLUNK_DB/asx/db
+coldPath   = $SPLUNK_DB/asx/colddb
+thawedPath = $SPLUNK_DB/asx/thaweddb
+```
+
 ## Support
 Please use the [GitHub issue tracker](https://github.com/splunk/analytic_story_execution/issues) to submit bugs or request features.
 
