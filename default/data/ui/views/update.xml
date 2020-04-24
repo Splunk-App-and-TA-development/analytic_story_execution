@@ -1,0 +1,34 @@
+<form theme="dark">
+  <label>Update</label>
+  <description>Select which stories to update below. WARNING All is currently disabled for this release.</description>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="multiselect" token="stories">
+      <label>Available Stories</label>
+      <fieldForLabel>name</fieldForLabel>
+      <fieldForValue>name</fieldForValue>
+      <search>
+        <query>| asxupdate list_all=true| spath name</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <delimiter>,</delimiter>
+      <prefix>"</prefix>
+      <suffix>"</suffix>
+      <choice value="all">All</choice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <event>
+        <title>Update Status</title>
+        <search>
+          <query>| asxupdate story=$stories$</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+  </row>
+</form>

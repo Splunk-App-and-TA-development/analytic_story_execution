@@ -1,45 +1,32 @@
-# Analytic Story Execution App (ASX)
+# Analytic Story Execution (ASX)
 ![](static/appIconAlt_2x.png)
+----
 
-**Benefit:** Instead of running each search individually, analysts can use this app to execute an Analytic Story end-to-end in their environments.
+## Description:
 
-**Value:** Security analysts gain use-case relevant context and correlation when events are generated.
+This application allows you to execute and schedule [Splunk's Analytic Stories](https://github.com/splunk/security-content). Instead of running each search individually, analysts can use this app to execute and preview the results of executing or scheduling an Analytic Story end-to-end in their environments. The results of the Analytic Stories are stored in the ```index=asx```, which are used to populate the Home dashboard. Furthermore, Analytic Story Execution is capable of updating its Analytic Stories from the [security content api](https://docs.splunkresearch.com/?version=latest).
 
-![](static/screenshot.png)
+![Home](pictures/asx_home_dashboard.png)
 
-This application gives you the tools to make the execution of an Analytic Story in Splunk an automated process. It's as easy as selecting an Analytic Story and clicking "Submit!"
+![Update](pictures/asx_update_dashboard.png)
 
-There are two custom commands in this app that will help you automatically detect and investigate scenarios in your dataset:
+![Execute](pictures/asx_execute_dashboard.png)
 
-### Detect
 
-```
-detect story="Malicious Powershell" | `format_detection_results`
-```
+## Installation
 
-This runs all detection searches belonging to an Analytic Story and stores results in the KV store collection detect_kvstore. Also returns the following object for each detection search:
+1. Download the [latest release](https://github.com/splunk/analytic_story_execution/releases) and install on your Splunk Search Head.
+2. If you do not have Analytic Stories in your Splunk environment, the Splunk Research team regularly releases security analytic stories via [ES Content Updates](https://splunkbase.splunk.com/app/3449/). We recommend you to install the ESCU application to get started quickly.
 
-##### [Object Example](https://jsoneditoronline.org/?id=5527dddc593545baa60c5cfd4b10b2f0)
 
-![](static/object_example.png)
-
-### Investigate
-
-`| investigate `
-
-This runs all investigative searches related to the results of a detection in an Analytic Story. Note that investigate is a streaming command and can be executed after "Detect."
+The app requires the creation of an `index=asx`. Example **index.conf** entry:
 
 ```
-detect story="Malicious Powershell" 
-| `format_detection_results` 
-| investigate 
-| mvexpand investigation_results 
-| spath output=investigation_search_name input=investigation_results path=investigation_search_name 
-| spath output=investigation_result input=investigation_results path=investigation_result{} | stats count values(investigation_result) as investigation_result by investigation_search_name
+[asx]
+homePath   = $SPLUNK_DB/asx/db
+coldPath   = $SPLUNK_DB/asx/colddb
+thawedPath = $SPLUNK_DB/asx/thaweddb
 ```
-
-# Architectural Flow Diagram
-![](static/architecture.png)
 
 ## Support
 Please use the [GitHub issue tracker](https://github.com/splunk/analytic_story_execution/issues) to submit bugs or request features.
@@ -50,5 +37,7 @@ If you have questions or need support, you can:
 * Join the [#security-research](https://splunk-usergroups.slack.com/messages/C1RH09ERM/) room in the [Splunk Slack channel](http://splunk-usergroups.slack.com)
 * If you are a Splunk Enterprise customer with a valid support entitlement contract and have a Splunk-related question, you can also open a support case on the https://www.splunk.com/ support portal
 
-## Contributing
-We welcome feedback and contributions from the community! Please see our [contribution guidelines](docs/CONTRIBUTING.md) for more information on how to get involved. 
+## Author
+* [Jose Hernandez](https://twitter.com/d1vious)
+* [Bhavin Patel](https://twitter.com/hackpsy)
+* [Patrick Bareiss](https://twitter.com/bareiss_patrick)

@@ -4,8 +4,8 @@
     "title": "Analytic Story Execution", 
     "id": {
       "group": null, 
-      "name": "Splunk_Analytic_Story_Execution",
-      "version": "1.0"
+      "name": "Splunk_ASX",
+      "version": "2.0.1"
     }, 
     "author": [
       {
@@ -30,11 +30,6 @@
     "privacyPolicy": {
       "name": null, 
       "text": null, 
-      "uri": null
-    }, 
-    "releaseNotes": {
-      "name": null, 
-      "text": "./README.md", 
       "uri": null
     }
   }, 

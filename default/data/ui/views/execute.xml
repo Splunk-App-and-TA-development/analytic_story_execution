@@ -1,0 +1,98 @@
+<form hideFilters="false" theme="dark">
+  <label>Execute</label>
+  <fieldset autoRun="false" submitButton="true">
+    <input type="dropdown" token="story" searchWhenChanged="false">
+      <label>Select a story</label>
+      <search>
+        <query>| rest /services/configs/conf-savedsearches splunk_server=local count=0 |search action.escu.search_type = detection | table  action.escu.analytic_story | rename action.escu.analytic_story as story | eval story = "{\"story\": " + story + "}" | spath input=story | rename story{} as story | stats count by story | table story</query>
+      </search>
+      <fieldForLabel>story</fieldForLabel>
+      <fieldForValue>story</fieldForValue>
+    </input>
+    <input type="radio" token="mode">
+      <label>Mode</label>
+      <choice value="now">Now</choice>
+      <choice value="schedule">Schedule</choice>
+      <change>
+        <condition label="Now">
+          <set token="showTimePicker">Y</set>
+          <set token="showNowPanel">Y</set>
+          <unset token="showCron"></unset>
+          <unset token="showSchedulePanel"></unset>
+        </condition>
+        <condition label="Schedule">
+          <set token="showCron">Y</set>
+          <set token="showSchedulePanel">Y</set>
+          <unset token="showTimePicker"></unset>
+          <unset token="showNowPanel"></unset>
+        </condition>
+      </change>
+      <default>now</default>
+      <initialValue>now</initialValue>
+    </input>
+    <input type="text" token="cron" depends="$showCron$">
+      <label>Cron</label>
+      <default>*/15 * * * *</default>
+    </input>
+    <input type="text" token="earliest_time" depends="$showCron$">
+      <label>earliest time</label>
+      <default>-15m</default>
+    </input>
+    <input type="text" token="latest_time" depends="$showCron$">
+      <label>latest time</label>
+      <default>now</default>
+    </input>
+    <input type="time" token="time" depends="$showNowPanel$">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <html>
+    </html>
+  </fieldset>
+  <row>
+    <panel depends="$showNowPanel$">
+      <event>
+        <title>Execute NOW Status</title>
+        <search>
+          <query>|executestory story = "$story$" mode="$mode$"</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+    <panel depends="$showSchedulePanel$">
+      <event>
+        <title>Execute Schedule Status</title>
+        <search>
+          <query>|executestory story = "$story$" mode="$mode$" cron = "$cron$" earliest_time="$earliest_time$" latest_time="$latest_time$"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="list.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </event>
+    </panel>
+  </row>
+  <row>
+    <panel depends="$showNowPanel$">
+      <table>
+        <title>Detection Results for last execution</title>
+        <search>
+          <query>index=asx | eventstats max(execution_time) as max_execution_time | where execution_time=max_execution_time | convert timeformat="%m/%d/%Y %H:%M:%S" ctime(execution_time) | fillnull | stats count by source dest execution_time</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+          <refresh>5s</refresh>
+          <refreshType>delay</refreshType>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>

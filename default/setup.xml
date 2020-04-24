@@ -1,0 +1,11 @@
+<setup>
+  <block title="Splunk Security Content API" endpoint="asx/conf" entity="settings">
+    <text>Enter the URL to fetch security content via API. Example: https://content.splunkresearch.com</text>
+	<text>For more information please visit https://docs.splunkresearch.com</text>
+
+      <input field="api_url">
+        <label>API URL</label>
+        <type>text</type>
+      </input>
+  </block>
+</setup>
