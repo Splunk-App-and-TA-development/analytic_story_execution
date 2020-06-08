@@ -30,6 +30,11 @@ class ASXLib:
         self.__generate_standard_macros(self.service)
 
         for detection in story['detections']:
+            if 'macros' in detection:
+                for macro in detection['macros']:
+                    self.logger.info("asx_lib.py - generate macros.conf for: {0}".format(macro['name']))
+                    self.__generate_macro(self.service, macro)
+
             self.logger.info("asx_lib.py - generate savedsearches.conf for detection: {0}".format(detection['name']))
             kwargs = self.__generate_detection(self.service, detection)
 
@@ -38,10 +43,6 @@ class ASXLib:
                     self.logger.info("asx_lib.py - generate savedsearches.conf for baseline: {0}".format(baseline['name']))
                     self.__generate_baseline(self.service, baseline)
 
-            if 'macros' in detection:
-                for macro in detection['macros']:
-                    self.logger.info("asx_lib.py - generate macros.conf for: {0}".format(macro['name']))
-                    self.__generate_macro(self.service, macro)
 
         return 0
 
@@ -190,7 +191,7 @@ class ASXLib:
             kwargs.update({"cron_schedule":  "*/30 * * * *" })
             kwargs.update({"dispatch.earliest_time":  "-30m" })
             kwargs.update({"dispatch.latest_time":  "now" })
-            kwargs.update({"action.escu.eli5":  baseline['decription']})
+            kwargs.update({"action.escu.eli5":  baseline['description']})
 
             if 'how_to_implement' in baseline:
                 kwargs.update({"action.escu.how_to_implement":  baseline['how_to_implement']})
@@ -212,6 +213,7 @@ class ASXLib:
             search = full_search_name
             search = search.encode('ascii', 'ignore').decode('ascii')
 
+            # add try except here
             savedsearch = service.saved_searches.create(search, query, **kwargs)
 
 
@@ -248,7 +250,7 @@ class ASXLib:
             kwargs.update({"action.escu.mappings":  json.dumps(detection['mappings']) })
             if 'data_model' in detection:
                 kwargs.update({"action.escu.data_models":  json.dumps(detection['data_model']) })
-            kwargs.update({"action.escu.eli5":  detection['decription'] })
+            kwargs.update({"action.escu.eli5":  detection['description'] })
             if 'how_to_implement' in detection:
                 kwargs.update({"action.escu.how_to_implement":  detection['how_to_implement'] })
             else:
@@ -270,6 +272,7 @@ class ASXLib:
             kwargs.update({"cron_schedule":  "*/30 * * * *" })
             kwargs.update({"dispatch.earliest_time":  "-30m" })
             kwargs.update({"dispatch.latest_time":  "now" })
+            kwargs.update({"action.correlationsearch": "1"})
             kwargs.update({"action.correlationsearch.enabled": "1"})
             kwargs.update({"action.correlationsearch.label":  full_search_name })
             kwargs.update({"schedule_window": "auto"})
@@ -281,14 +284,14 @@ class ASXLib:
             kwargs.update({"action.notable.param.rule_title": full_search_name })
             kwargs.update({"action.notable.param.security_domain": detection['tags']['security_domain'] })
             kwargs.update({"action.notable.param.severity": "high" })
-            kwargs.update({"alert.digest_mode": "1"})
+            #kwargs.update({"alert.digest_mode": "1"})
             kwargs.update({"action.escu.earliest_time_offset": "3600"})
             kwargs.update({"action.escu.latest_time_offset": "86400"})
             kwargs.update({"enableSched": "1"})
-            kwargs.update({"counttype": "number of events"})
-            kwargs.update({"relation": "greater than"})
-            kwargs.update({"quantity": "0"})
-            kwargs.update({"realtime_schedule": "0"})
+            #kwargs.update({"counttype": "number of events"})
+            #kwargs.update({"relation": "greater than"})
+            #kwargs.update({"quantity": "0"})
+            #kwargs.update({"realtime_schedule": "0"})
             kwargs.update({"disabled": "true"})
             kwargs.update({"is_visible": "false"})
 
