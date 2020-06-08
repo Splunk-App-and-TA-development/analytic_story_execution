@@ -284,7 +284,7 @@ class ASXLib:
             kwargs.update({"action.notable.param.rule_title": full_search_name })
             kwargs.update({"action.notable.param.security_domain": detection['tags']['security_domain'] })
             kwargs.update({"action.notable.param.severity": "high" })
-            #kwargs.update({"alert.digest_mode": "1"})
+            kwargs.update({"alert.track": "1"})
             kwargs.update({"action.escu.earliest_time_offset": "3600"})
             kwargs.update({"action.escu.latest_time_offset": "86400"})
             kwargs.update({"is_scheduled": "1"})
@@ -292,7 +292,7 @@ class ASXLib:
             kwargs.update({"alert_comparator": "greater than"})
             kwargs.update({"alert_threshold": "0"})
             #kwargs.update({"realtime_schedule": "0"})
-            kwargs.update({"disabled": "true"})
+            kwargs.update({"disabled": "false"})
             kwargs.update({"is_visible": "false"})
 
             query = detection['search']
