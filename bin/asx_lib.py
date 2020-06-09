@@ -292,7 +292,7 @@ class ASXLib:
             kwargs.update({"alert_comparator": "greater than"})
             kwargs.update({"alert_threshold": "0"})
             #kwargs.update({"realtime_schedule": "0"})
-            kwargs.update({"disabled": "false"})
+            kwargs.update({"disabled": "true"})
             kwargs.update({"is_visible": "false"})
 
             query = detection['search']
