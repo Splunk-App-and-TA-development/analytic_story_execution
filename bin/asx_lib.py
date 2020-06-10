@@ -74,8 +74,8 @@ class ASXLib:
                         else:
                             query = search['search']
 
-                        if "mitre_technique_id" in mappings:
-                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_technique_id"][0] + ', execution_type=scheduled"'
+                        if "mitre_attack" in mappings:
+                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_attack"][0] + ', execution_type=scheduled"'
                         else:
                             query = query + ' | collect index=asx marker="execution_type=scheduled"'
 
