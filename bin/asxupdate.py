@@ -41,12 +41,12 @@ class ASXUpdate(GeneratingCommand):
             self.logger.info("asxupdate.py - list all stories")
             stories = asx_lib.list_analytics_stories()
             for story in stories:
-                self.logger.info("asxupdate.py - processing story {0}".format(story))
+                self.logger.info("asxupdate.py - processing story {0}".format(story['name']))
 
                 yield {
                     '_time': time.time(),
                     'sourcetype': "_json",
-                    '_raw': {'name': story},
+                    '_raw': {'name': story['name']},
                     'status': "successfully listed all stories"
                 }
         # only updating specific stories
@@ -67,12 +67,12 @@ class ASXUpdate(GeneratingCommand):
             self.logger.info("asxupdate.py - updating ALL stories")
             stories = asx_lib.list_analytics_stories()
             for story in stories:
-                self.logger.info("asxupdate.py - updating story {0}".format(story))
+                self.logger.info("asxupdate.py - updating story {0}".format(story['name']))
                 #asx_lib.get_analytics_story(story)
                 yield {
                     '_time': time.time(),
                     'sourcetype': "_json",
-                    '_raw': story,
+                    '_raw': story['name'],
                     'status': "successfully updated story"
                 }
 
