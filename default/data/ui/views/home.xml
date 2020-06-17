@@ -37,7 +37,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=initial-access&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=initial-access&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -68,7 +68,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=execution&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=execution&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -99,7 +99,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=persistence&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=persistence&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -130,7 +130,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=privilege-escalation&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=privilege-escalation&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -161,7 +161,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=defense-evasion&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=defense-evasion&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -192,7 +192,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=credential-access&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=credential-access&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -225,7 +225,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=discovery&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=discovery&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -256,7 +256,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=lateral-movement&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=lateral-movement&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -287,7 +287,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=collection&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=collection&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -318,7 +318,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=command-and-control&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=command-and-control&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -349,7 +349,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=exfiltration&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=exfiltration&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -380,7 +380,7 @@
         <option name="useColors">1</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20mitre_tactics=impact&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20mitre_tactics=impact&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </single>
     </panel>
@@ -404,7 +404,7 @@
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
         <drilldown>
-          <link target="_blank">search?q=%60threat-hunting-index%60%20attack_ID=$row.attack_ID$&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
+          <link target="_blank">search?q=%60asx%60%20attack_ID=$row.attack_ID$&amp;earliest=$time_picker.earliest$&amp;latest=$time_picker.latest$</link>
         </drilldown>
       </table>
     </panel>
