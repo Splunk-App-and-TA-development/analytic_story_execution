@@ -28,6 +28,9 @@ coldPath   = $SPLUNK_DB/asx/colddb
 thawedPath = $SPLUNK_DB/asx/thaweddb
 ```
 
+## API Configuration
+The Security Content API URL is statically configured in [asx.conf](https://github.com/splunk/analytic_story_execution/blob/develop/default/asx.conf), so the users do not have to do any setup steps to use this app. Please update the url if the API endpoint changes.
+
 ## Support
 Please use the [GitHub issue tracker](https://github.com/splunk/analytic_story_execution/issues) to submit bugs or request features.
 
