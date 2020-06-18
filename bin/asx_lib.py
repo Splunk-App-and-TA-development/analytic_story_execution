@@ -75,9 +75,9 @@ class ASXLib:
                             query = search['search']
 
                         if "mitre_attack" in mappings:
-                            query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_attack"][0] + ', execution_type=scheduled"'
+                            query = query + ' | collect index=asx sourcetype=asx marker="mitre_id=' + mappings["mitre_attack"][0] + ', execution_type=scheduled"'
                         else:
-                            query = query + ' | collect index=asx marker="execution_type=scheduled"'
+                            query = query + ' | collect index=asx sourcetype=asx marker="execution_type=scheduled"'
 
                         self.logger.info("asx_lib.py - schedule detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
                         self.logger.info("asx_lib.py - schedule detection earliest_time latest_time - {} - {}\n".format(earliest_time, latest_time))
@@ -129,9 +129,9 @@ class ASXLib:
                     query = search['search']
 
                 if "mitre_attack" in mappings:
-                    query = query + ' | collect index=asx marker="mitre_id=' + mappings["mitre_attack"][0] + ', execution_type=adhoc, execution_time=' + execution_time + '"'
+                    query = query + ' | collect index=asx sourcetype=asx marker="mitre_id=' + mappings["mitre_attack"][0] + ', execution_type=adhoc, execution_time=' + execution_time + '"'
                 else:
-                    query = query + ' | collect index=asx marker="execution_type=adhoc, execution_time=' + execution_time + '"'
+                    query = query + ' | collect index=asx sourcetype=asx marker="execution_type=adhoc, execution_time=' + execution_time + '"'
 
                 self.logger.info("asx_lib.py - run detection - {} - {}\n".format(search['action.escu.full_search_name'], query))
 
