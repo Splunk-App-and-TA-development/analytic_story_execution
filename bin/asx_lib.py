@@ -3,6 +3,8 @@ import json
 import splunk.mining.dcutils
 import time
 import re
+import requests
+import os
 
 class ASXLib:
     logger = splunk.mining.dcutils.getLogger()
@@ -187,7 +189,9 @@ class ASXLib:
     def __generate_lookup(self, service, lookup):
         kwargs = {}
         if 'filename' in lookup:
-            # download csv file
+            url = 'https://security-content.s3-us-west-2.amazonaws.com/lookups/' + lookup['filename']
+            r = requests.get(url, allow_redirects=True)
+            open(os.path.join(os.path.dirname(__file__), '../lookups/' + lookup['filename']), 'w').write(r.content)
             kwargs.update({"filename": lookup['filename']})
         else:
             kwargs.update({"collection": lookup['collection']})
@@ -209,8 +213,11 @@ class ASXLib:
         if 'filter' in lookup:
             kwargs.update({"filter": lookup['filter']})
 
-        service.post('properties/transforms', __stanza=lookup['name'])
-        service.post('properties/macros/' + lookup['name'], **kwargs)
+        try:
+            service.post('properties/transforms', __stanza=lookup['name'])
+            service.post('properties/transforms/' + lookup['name'], **kwargs)
+        except Exception as e:
+            self.logger.error("Failed to store lookup " + lookup['name'] + " with error: " + str(e))
 
 
     def __generate_baseline(self, service, baseline):
@@ -258,8 +265,10 @@ class ASXLib:
             search = full_search_name
             search = search.encode('ascii', 'ignore').decode('ascii')
 
-            # add try except here
-            savedsearch = service.saved_searches.create(search, query, **kwargs)
+            try:
+                savedsearch = service.saved_searches.create(search, query, **kwargs)
+            except Exception as e:
+                self.logger.error("Failed to store detection " + baseline['name'] + " with error: " + str(e))
 
 
     def __generate_detection(self, service, detection):
