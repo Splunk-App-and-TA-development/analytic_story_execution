@@ -15,7 +15,7 @@ class ASXLib:
             self.api_url = api_url
 
     def list_analytics_stories(self):
-        url = self.api_url + '/stories?community=false'
+        url = self.api_url + '/stories'
         response = self.__call_security_content_api(url)
         self.logger.info("asx_lib.py - listing stories - {0}\n".format(response))
         return response['stories']
@@ -24,7 +24,7 @@ class ASXLib:
     def get_analytics_story(self, name):
         self.story = name
 
-        url = self.api_url + '/stories/' + name  + '?community=false'
+        url = self.api_url + '/stories/' + name
         story = self.__call_security_content_api(url)
 
         self.__generate_standard_macros(self.service)
@@ -35,6 +35,9 @@ class ASXLib:
                     self.logger.info("asx_lib.py - generate macros.conf for: {0}".format(macro['name']))
                     self.__generate_macro(self.service, macro)
 
+                    # to do
+                    #if 'lookups' in macro:
+
             self.logger.info("asx_lib.py - generate savedsearches.conf for detection: {0}".format(detection['name']))
             kwargs = self.__generate_detection(self.service, detection)
 
@@ -43,6 +46,8 @@ class ASXLib:
                     self.logger.info("asx_lib.py - generate savedsearches.conf for baseline: {0}".format(baseline['name']))
                     self.__generate_baseline(self.service, baseline)
 
+            # to do
+            #if 'lookups' in detection:
 
         return 0
 
