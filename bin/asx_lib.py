@@ -39,8 +39,9 @@ class ASXLib:
                         self.logger.info("asx_lib.py - generate macros.conf for: {0}".format(macro['name']))
                         self.__generate_macro(self.service, macro)
 
-                        # to do
-                        #if 'lookups' in macro:
+                        if 'lookups' in macro:
+                            for lookup in macro['lookups']:
+                                self.__generate_lookup(self.service, lookup)
 
                 self.logger.info("asx_lib.py - generate savedsearches.conf for detection: {0}".format(detection['name']))
                 kwargs = self.__generate_detection(self.service, detection)
@@ -50,8 +51,13 @@ class ASXLib:
                         self.logger.info("asx_lib.py - generate savedsearches.conf for baseline: {0}".format(baseline['name']))
                         self.__generate_baseline(self.service, baseline)
 
-                # to do
-                #if 'lookups' in detection:
+                        if 'lookups' in baseline:
+                            for lookup in baseline['lookups']:
+                                self.__generate_lookup(self.service, lookup)
+
+                if 'lookups' in detection:
+                    for lookup in detection['lookups']:
+                        self.__generate_lookup(self.service, lookup)
 
         return 0
 
@@ -177,6 +183,35 @@ class ASXLib:
 
         service.post('properties/macros', __stanza="security_content_summariesonly")
         service.post('properties/macros/security_content_summariesonly', definition='summariesonly=true allow_old_summaries=true', description="search data models summaries only", args='field')
+
+    def __generate_lookup(self, service, lookup):
+        kwargs = {}
+        if 'filename' in lookup:
+            # download csv file
+            kwargs.update({"filename": lookup['filename']})
+        else:
+            kwargs.update({"collection": lookup['collection']})
+            kwargs.update({"external_type": 'kvstore'})
+        if 'default_match' in lookup:
+            kwargs.update({"default_match": lookup['default_match']})
+        if 'case_sensitive_match' in lookup:
+            kwargs.update({"case_sensitive_match": lookup['case_sensitive_match']})
+        if 'description' in lookup:
+            kwargs.update({"description": lookup['description']})
+        if 'match_type' in lookup:
+            kwargs.update({"match_type": lookup['match_type']})
+        if 'max_matches' in lookup:
+            kwargs.update({"max_matches": lookup['max_matches']})
+        if 'min_matches' in lookup:
+            kwargs.update({"min_matches": lookup['min_matches']})
+        if 'fields_list' in lookup:
+            kwargs.update({"fields_list": lookup['fields_list']})
+        if 'filter' in lookup:
+            kwargs.update({"filter": lookup['filter']})
+
+        service.post('properties/transforms', __stanza=lookup['name'])
+        service.post('properties/macros/' + lookup['name'], **kwargs)
+
 
     def __generate_baseline(self, service, baseline):
         full_search_name = str("ESCU - " + baseline['name'])
