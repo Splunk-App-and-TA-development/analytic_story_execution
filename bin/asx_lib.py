@@ -22,34 +22,39 @@ class ASXLib:
 
 
     def get_analytics_story(self, name):
-        self.story = name
 
-        url = self.api_url + '/stories/' + name
-        story = self.__call_security_content_api(url)
+        if name == 'All':
+            url = self.api_url + '/stories'
+        else:
+            url = self.api_url + '/stories/' + name
+
+        response = self.__call_security_content_api(url)
 
         self.__generate_standard_macros(self.service)
 
-        for detection in story['detections']:
-            if 'macros' in detection:
-                for macro in detection['macros']:
-                    self.logger.info("asx_lib.py - generate macros.conf for: {0}".format(macro['name']))
-                    self.__generate_macro(self.service, macro)
+        for story in response['stories']:
+            for detection in story['detections']:
+                if 'macros' in detection:
+                    for macro in detection['macros']:
+                        self.logger.info("asx_lib.py - generate macros.conf for: {0}".format(macro['name']))
+                        self.__generate_macro(self.service, macro)
 
-                    # to do
-                    #if 'lookups' in macro:
+                        # to do
+                        #if 'lookups' in macro:
 
-            self.logger.info("asx_lib.py - generate savedsearches.conf for detection: {0}".format(detection['name']))
-            kwargs = self.__generate_detection(self.service, detection)
+                self.logger.info("asx_lib.py - generate savedsearches.conf for detection: {0}".format(detection['name']))
+                kwargs = self.__generate_detection(self.service, detection)
 
-            if 'baselines' in detection:
-                for baseline in detection['baselines']:
-                    self.logger.info("asx_lib.py - generate savedsearches.conf for baseline: {0}".format(baseline['name']))
-                    self.__generate_baseline(self.service, baseline)
+                if 'baselines' in detection:
+                    for baseline in detection['baselines']:
+                        self.logger.info("asx_lib.py - generate savedsearches.conf for baseline: {0}".format(baseline['name']))
+                        self.__generate_baseline(self.service, baseline)
 
-            # to do
-            #if 'lookups' in detection:
+                # to do
+                #if 'lookups' in detection:
 
         return 0
+
 
 
     def schedule_analytics_story(self, name, earliest_time, latest_time, cron_schedule):
