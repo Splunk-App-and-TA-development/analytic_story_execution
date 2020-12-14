@@ -50,7 +50,7 @@ class ASXUpdate(GeneratingCommand):
                     'status': "successfully listed all stories"
                 }
         # only updating specific stories
-        if self.story and self.story != "all":
+        if self.story:
             self.logger.info("asxupdate.py - stories to update {0}".format(self.story))
             stories = self.story.split(",")
             for story in stories:
@@ -60,19 +60,6 @@ class ASXUpdate(GeneratingCommand):
                     '_time': time.time(),
                     'sourcetype': "_json",
                     '_raw': story,
-                    'status': "successfully updated story"
-                }
-        # lets update all stories, disabled until spec 3.0 change
-        else:
-            self.logger.info("asxupdate.py - updating ALL stories")
-            stories = asx_lib.list_analytics_stories()
-            for story in stories:
-                self.logger.info("asxupdate.py - updating story {0}".format(story['name']))
-                #asx_lib.get_analytics_story(story)
-                yield {
-                    '_time': time.time(),
-                    'sourcetype': "_json",
-                    '_raw': story['name'],
                     'status': "successfully updated story"
                 }
 
