@@ -191,7 +191,7 @@ class ASXLib:
         if 'filename' in lookup:
             url = 'https://security-content.s3-us-west-2.amazonaws.com/lookups/' + lookup['filename']
             r = requests.get(url, allow_redirects=True)
-            open(os.path.join(os.path.dirname(__file__), '../lookups/' + lookup['filename']), 'w').write(r.content)
+            open(os.path.join(os.path.dirname(__file__), '../lookups/' + lookup['filename']), 'wb').write(r.content)
             kwargs.update({"filename": lookup['filename']})
         else:
             kwargs.update({"collection": lookup['collection']})
