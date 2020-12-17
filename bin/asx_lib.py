@@ -189,9 +189,13 @@ class ASXLib:
     def __generate_lookup(self, service, lookup):
         kwargs = {}
         if 'filename' in lookup:
+            if not os.path.exists('/opt/splunk/var/run/splunk/lookup_tmp'):
+                os.makedirs('/opt/splunk/var/run/splunk/lookup_tmp')
             url = 'https://security-content.s3-us-west-2.amazonaws.com/lookups/' + lookup['filename']
             r = requests.get(url, allow_redirects=True)
-            open(os.path.join(os.path.dirname(__file__), '../lookups/' + lookup['filename']), 'wb').write(r.content)
+            lookup_table_file_path = '/opt/splunk/var/run/splunk/lookup_tmp/' + lookup['filename']
+            open(lookup_table_file_path, 'wb').write(r.content)
+            service.post('data/lookup-table-files', eai:data=lookup_table_file_path, name=lookup['name'])
             kwargs.update({"filename": lookup['filename']})
         else:
             kwargs.update({"collection": lookup['collection']})
