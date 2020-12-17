@@ -197,7 +197,7 @@ class ASXLib:
             open(lookup_table_file_path, 'wb').write(r.content)
             kwargs2 = {}
             kwargs2.update({"eai:data": lookup_table_file_path})
-            kwargs2.update({"name": lookup['name']})
+            kwargs2.update({"name": lookup['filename']})
             service.post('data/lookup-table-files', **kwargs2)
             kwargs.update({"filename": lookup['filename']})
         else:
