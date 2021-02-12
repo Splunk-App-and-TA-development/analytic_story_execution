@@ -3,6 +3,8 @@ import json
 import splunk.mining.dcutils
 import time
 import re
+import requests
+import os
 
 class ASXLib:
     logger = splunk.mining.dcutils.getLogger()
@@ -15,36 +17,52 @@ class ASXLib:
             self.api_url = api_url
 
     def list_analytics_stories(self):
-        url = self.api_url + '/stories?community=false'
+        url = self.api_url + '/stories'
         response = self.__call_security_content_api(url)
         self.logger.info("asx_lib.py - listing stories - {0}\n".format(response))
         return response['stories']
 
 
     def get_analytics_story(self, name):
-        self.story = name
 
-        url = self.api_url + '/stories/' + name  + '?community=false'
-        story = self.__call_security_content_api(url)
+        if name == 'All':
+            url = self.api_url + '/stories'
+        else:
+            url = self.api_url + '/stories/' + name
+
+        response = self.__call_security_content_api(url)
 
         self.__generate_standard_macros(self.service)
 
-        for detection in story['detections']:
-            if 'macros' in detection:
-                for macro in detection['macros']:
-                    self.logger.info("asx_lib.py - generate macros.conf for: {0}".format(macro['name']))
-                    self.__generate_macro(self.service, macro)
+        for story in response['stories']:
+            for detection in story['detections']:
+                if 'macros' in detection:
+                    for macro in detection['macros']:
+                        self.logger.info("asx_lib.py - generate macros.conf for: {0}".format(macro['name']))
+                        self.__generate_macro(self.service, macro)
 
-            self.logger.info("asx_lib.py - generate savedsearches.conf for detection: {0}".format(detection['name']))
-            kwargs = self.__generate_detection(self.service, detection)
+                        if 'lookups' in macro:
+                            for lookup in macro['lookups']:
+                                self.__generate_lookup(self.service, lookup)
 
-            if 'baselines' in detection:
-                for baseline in detection['baselines']:
-                    self.logger.info("asx_lib.py - generate savedsearches.conf for baseline: {0}".format(baseline['name']))
-                    self.__generate_baseline(self.service, baseline)
+                self.logger.info("asx_lib.py - generate savedsearches.conf for detection: {0}".format(detection['name']))
+                kwargs = self.__generate_detection(self.service, detection)
 
+                if 'baselines' in detection:
+                    for baseline in detection['baselines']:
+                        self.logger.info("asx_lib.py - generate savedsearches.conf for baseline: {0}".format(baseline['name']))
+                        self.__generate_baseline(self.service, baseline)
+
+                        if 'lookups' in baseline:
+                            for lookup in baseline['lookups']:
+                                self.__generate_lookup(self.service, lookup)
+
+                if 'lookups' in detection:
+                    for lookup in detection['lookups']:
+                        self.__generate_lookup(self.service, lookup)
 
         return 0
+
 
 
     def schedule_analytics_story(self, name, earliest_time, latest_time, cron_schedule):
@@ -168,6 +186,47 @@ class ASXLib:
         service.post('properties/macros', __stanza="security_content_summariesonly")
         service.post('properties/macros/security_content_summariesonly', definition='summariesonly=true allow_old_summaries=true', description="search data models summaries only", args='field')
 
+    def __generate_lookup(self, service, lookup):
+        kwargs = {}
+        if 'filename' in lookup:
+            if not os.path.exists('/opt/splunk/var/run/splunk/lookup_tmp'):
+                os.makedirs('/opt/splunk/var/run/splunk/lookup_tmp')
+            url = 'https://security-content.s3-us-west-2.amazonaws.com/lookups/' + lookup['filename']
+            r = requests.get(url, allow_redirects=True)
+            lookup_table_file_path = '/opt/splunk/var/run/splunk/lookup_tmp/' + lookup['filename']
+            open(lookup_table_file_path, 'wb').write(r.content)
+            kwargs2 = {}
+            kwargs2.update({"eai:data": lookup_table_file_path})
+            kwargs2.update({"name": lookup['filename']})
+            service.post('data/lookup-table-files', **kwargs2)
+            kwargs.update({"filename": lookup['filename']})
+        else:
+            kwargs.update({"collection": lookup['collection']})
+            kwargs.update({"external_type": 'kvstore'})
+        if 'default_match' in lookup:
+            kwargs.update({"default_match": lookup['default_match']})
+        if 'case_sensitive_match' in lookup:
+            kwargs.update({"case_sensitive_match": lookup['case_sensitive_match']})
+        if 'description' in lookup:
+            kwargs.update({"description": lookup['description']})
+        if 'match_type' in lookup:
+            kwargs.update({"match_type": lookup['match_type']})
+        if 'max_matches' in lookup:
+            kwargs.update({"max_matches": lookup['max_matches']})
+        if 'min_matches' in lookup:
+            kwargs.update({"min_matches": lookup['min_matches']})
+        if 'fields_list' in lookup:
+            kwargs.update({"fields_list": lookup['fields_list']})
+        if 'filter' in lookup:
+            kwargs.update({"filter": lookup['filter']})
+
+        try:
+            service.post('properties/transforms', __stanza=lookup['name'])
+            service.post('properties/transforms/' + lookup['name'], **kwargs)
+        except Exception as e:
+            self.logger.error("Failed to store lookup " + lookup['name'] + " with error: " + str(e))
+
+
     def __generate_baseline(self, service, baseline):
         full_search_name = str("ESCU - " + baseline['name'])
         resp = service.saved_searches.list()
@@ -213,8 +272,10 @@ class ASXLib:
             search = full_search_name
             search = search.encode('ascii', 'ignore').decode('ascii')
 
-            # add try except here
-            savedsearch = service.saved_searches.create(search, query, **kwargs)
+            try:
+                savedsearch = service.saved_searches.create(search, query, **kwargs)
+            except Exception as e:
+                self.logger.error("Failed to store detection " + baseline['name'] + " with error: " + str(e))
 
 
     def __generate_detection(self, service, detection):
@@ -305,6 +366,7 @@ class ASXLib:
                 savedsearch = service.saved_searches.create(search, query, **kwargs)
             except Exception as e:
                 self.logger.error("Failed to store detection " + detection['name'] + " with error: " + str(e))
+
 
 
 
